@@ -1,0 +1,10 @@
+#!/usr/bin/bash
+
+# Create virtual environment for python and flask.
+virtualenv flask
+
+# Install flask and pymongo in virtualenv.
+./flask/bin/pip install flask
+./flask/bin/pip install pymongo
+
+# Done

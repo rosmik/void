@@ -1,0 +1,7 @@
+1. Install mongodb and have it listening to port 27017
+
+2. Install virtualenv.py
+
+3. Run ./setupServerEnvironment
+
+4. Run ./server.py
