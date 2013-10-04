@@ -46,7 +46,7 @@ def add():
 
   return str(idNumber)
 
-@app.route('/restAdd/<string:name>/<string:phone>', methods=['GET'])
+@app.route('/add/<string:name>/<string:phone>', methods=['GET'])
 def restAdd(name, phone):
   newId = dict()
   newId['name'] = name

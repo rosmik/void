@@ -2,6 +2,7 @@ Usage example using CURL
 
 
 1. Add an ID:
+Option 1
 Send a POST request to http://79.136.89.243/add
 The request should have the header field Content-Type: application/json
 and the data should be a json dictionary with keys "name" and "phone" and values as strings.
@@ -19,7 +20,17 @@ Date: Fri, 04 Oct 2013 11:38:22 GMT
 0f3_4QdgRjw-GIEqdduZ
 <<<<<< END OF CURL OUTPUT
 
-An an identifier is returned. This can be used to request the added ID.
+An an identifier is returned. This identifier can be used to request the added ID.
+
+Option 2 (for testing)
+There is also a GET version of the above. Can be run in a normal browser.
+>>>>>> CURL COMMAND:
+$ curl -i http://79.136.89.243/add/Linus/0703916857
+
+Its the same as above but uses the URL instead of POST data.
+http://79.136.89.243/add/name/phone
+
+It will also return an identifier that can be used to request the added data.
 
 
 2. Retrieve the previously added ID:
