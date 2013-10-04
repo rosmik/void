@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/bin/bash
 
 # Create virtual environment for python and flask.
 virtualenv flask
