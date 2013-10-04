@@ -1,6 +1,6 @@
 #!flask/bin/python
 
-from flask import Flask, jsonify, make_response
+from flask import Flask, jsonify, make_response, request
 import random
 from pymongo import MongoClient
 import base64
@@ -67,9 +67,10 @@ def getCard(idNumber):
   print(idNumber)
   document = getDocument(idNumber)
   if document:
-    return jsonify(getDocument(idNumber))
+    del document['_id']
+    return jsonify(document)
   else :
     return makeErrorResponse(404, 'Not Found')
 
 if __name__ == '__main__':
-  app.run(debug=True, host='0.0.0.0')
+  app.run(debug=True, host='0.0.0.0', port=8080)
