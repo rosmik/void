@@ -1,0 +1,43 @@
+Usage example using CURL
+
+
+1. Add an ID:
+Send a POST request to http://79.136.89.243/add
+The request should have the header field Content-Type: application/json
+and the data should be a json dictionary with keys "name" and "phone" and values as strings.
+
+>>>>>> CURL COMMAND:
+$ curl -i -H "Content-Type: application/json" -X POST -d '{"name":"Linus Mellberg", "phone":"0703916857"}' http://79.136.89.243/add
+
+<<<<<< CURL OUTPUT:
+HTTP/1.0 200 OK
+Content-Type: text/html; charset=utf-8
+Content-Length: 21
+Server: Werkzeug/0.9.4 Python/2.7.5
+Date: Fri, 04 Oct 2013 11:38:22 GMT
+
+0f3_4QdgRjw-GIEqdduZ
+<<<<<< END OF CURL OUTPUT
+
+An an identifier is returned. This can be used to request the added ID.
+
+
+2. Retrieve the previously added ID:
+
+>>>>>> CURL COMMAND:
+$ curl -i  http://79.136.89.243/get/0f3_4QdgRjw-GIEqdduZ
+
+<<<<<< CURL OUTPUT:
+HTTP/1.0 200 OK
+Content-Type: application/json
+Content-Length: 56
+Server: Werkzeug/0.9.4 Python/2.7.5
+Date: Fri, 04 Oct 2013 11:39:09 GMT
+
+{
+  "Name": "Linus Mellberg", 
+  "Phone": "0703916857"
+}
+<<<<<< END OF CURL OUTPUT
+
+A json encoded dictionary is returned.
