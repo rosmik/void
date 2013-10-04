@@ -10,6 +10,11 @@ and the data should be a json dictionary with keys "name" and "phone" and values
 >>>>>> CURL COMMAND:
 $ curl -i -H "Content-Type: application/json" -X POST -d '{"name":"Linus Mellberg", "phone":"0703916857"}' http://79.136.89.243/add
 
+-i include header in output
+-H add header
+-X type of request (not needed since -d implies POST)
+-d data to be sent in a POST request
+
 <<<<<< CURL OUTPUT:
 HTTP/1.0 200 OK
 Content-Type: text/html; charset=utf-8
