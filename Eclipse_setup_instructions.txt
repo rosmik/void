@@ -1,0 +1,19 @@
+1. Ladda ner och extrahera Android SDK http://dl.google.com/android/android-sdk_r22.2.1-linux.tgz, rekommenderar att lägga den i din home-mapp (~)
+2. Starta eclipse, jag gjorde ett nytt workspace i void/workspace (committa det inte!)
+3. Installera ADT Plugin http://developer.android.com/sdk/installing/installing-adt.html Följ guiden, strunta i ADT Translation Manager Plugin.
+4. Installera Tools och Platforms. Välj Window->Android SDK Manager
+   Installera alla de nyaste versionerna av sakerna under Tools, 
+   installera API 11(för zxingfragmentlib, kanske inte behövs, men det krånglade utan den) och API 14(vår app),
+   (vet inte exakt vilka som behövs, jag har API 18, 15, 14, 11 och 10)
+   installera Android Support Library under Extras.
+
+5. Öppna projekten: File->New->Project... Välj Android Project from Existing Code
+   Root Directory -> void
+   Klicka i rutorna vid android-app och zxingfragmentlib, tryck finish.
+   
+6. Lägg till zxingfragmentslib som en build dependecy.
+   Högerklicka på android-app-projektet välj Properties, öppna Java Build Path klicka på tabben Projects välj klicka på Add... välj zxingfragmentlib-projektet.
+
+7. Ställ in Android API version på zxingfragmentlib och android-app, högerklicka Properties välj Android och klicka i Android 4.0 på bägge projekten.
+8. Ställ in zxingfragmentlib att vara ett library, högerklicka på projektet Properties och välj Android, klicka i Is Library
+9. Prova köra appen, koppla i telefonen, se till att du är i android-app-projektet, tryck F11.
