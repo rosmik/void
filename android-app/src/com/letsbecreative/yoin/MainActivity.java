@@ -2,7 +2,7 @@ package com.letsbecreative.yoin;
 
 import java.util.Locale;
 
-import com.abhi.barcode.fragment.library.BarCodeFragment;
+import com.welcu.android.zxingfragmentlib.BarCodeScannerFragment;
 
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
@@ -42,7 +42,7 @@ public class MainActivity extends FragmentActivity implements
 	 Fragment fragmentTab1 = new FragmentTab1();
 	 Fragment fragmentTab2 = new FragmentTab2();
 	 Fragment fragmentTab3 = new FragmentTab3();
-	 Fragment fragmentTab4 = new BarCodeFragment(); 
+	 Fragment fragmentTab4 = new BarCodeScannerFragment(); 
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
