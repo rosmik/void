@@ -1,0 +1,3 @@
+[submodule "zxingfragmentlib"]
+	path = zxingfragmentlib
+	url = git@github.com:welcu/zxingfragmentlib.git
