@@ -28,6 +28,34 @@ def insertDocument(document):
 def getDocument(_id):
   return db.cards.find_one({'_id': _id})
 
+def createVcard(idCard):
+  vcard = """BEGIN:VCARD
+VERSION:2.1
+N:$first;$last;;;
+FN:$fullname
+TEL;CELL:$phone
+END:VCARD"""
+  try:
+    name = idCard['Name']
+    phone = idCard['Phone']
+  except KeyError:
+    print('Invalid idCard to createVcard')
+    return None
+
+  t = name.split()[0]
+  first = t[0]
+  if(len(t) > 1):
+    last = t[1]
+  else:
+    last = ''
+  vcard = vcard.replace('$first', first)
+  vcard = vcard.replace('$last', last)
+  vcard = vcard.replace('$fullname', name)
+  vcard = vcard.replace('$phone', phone)
+
+  return vcard
+
+
 @app.route('/')
 def index():
   return 'Hello World!'
@@ -41,7 +69,6 @@ def add():
   newId['name'] = request.json['name']
   newId['phone'] = request.json['phone']
   idNumber = generateId()
-  ids[idNumber] = newId
   insertDocument(makeDocument(idNumber, request.json['name'], request.json['phone']))
 
   return str(idNumber)
@@ -71,6 +98,26 @@ def getCard(idNumber):
     return jsonify(document)
   else :
     return makeErrorResponse(404, 'Not Found')
+
+@app.route('/getVcard/<string:idNumber>', methods=['GET'])
+def getVcard(idNumber):
+  print(idNumber)
+  document = getDocument(idNumber)
+  if not document:
+    return makeErrorResponse(404, 'Not Found')
+  
+  del document['_id']
+  try:
+    name = document['Name']
+  except KeyError:
+    name = idNumber
+  print(document)
+  vcard = createVcard(document)
+  response = make_response(vcard)
+  response.headers['Content-Type'] = 'text/vcard'
+  response.headers['Content-Disposition'] = 'attachment; filename="' + name + '.vcf"'
+
+  return response
 
 if __name__ == '__main__':
   app.run(debug=True, host='0.0.0.0', port=8080)
