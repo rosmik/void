@@ -39,8 +39,8 @@ public class MainActivity extends FragmentActivity implements
 	/**
 	 *  The tabfragments
 	 */
-	 Fragment fragmentTab1 = new FragmentTab1();
-	 Fragment fragmentTab2 = new FragmentTab2();
+	 Fragment fragmentTab1 = new TextInput();
+	 Fragment fragmentTab2 = new User();
 	 Fragment fragmentTab3 = new FragmentTab3();
 	 Fragment fragmentTab4 = new BarCodeScannerFragment(); 
 
