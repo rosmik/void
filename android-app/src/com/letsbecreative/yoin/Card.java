@@ -7,8 +7,6 @@ import java.util.Map;
 import org.json.JSONObject;
 import org.json.JSONException;
 
-import android.util.Log;
-
 public class Card {
 	protected String firstName;
 	protected String lastName;
@@ -32,7 +30,7 @@ public class Card {
 	public Card(String jsonString) throws JSONException{
 		super();
 
-		Iterator<String> it;
+		Iterator<?> it;
 		JSONObject json = new JSONObject(jsonString);
 		
 		this.firstName = json.getString("firstName");
@@ -43,7 +41,7 @@ public class Card {
 		json.remove("_id");
 		it = json.keys();
 		while(it.hasNext()){
-			String key = it.next();
+			String key = (String) it.next();
 			addEntry(key, json.getString(key));
 		}
 	}
