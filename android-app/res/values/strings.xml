@@ -17,5 +17,7 @@
     <string name="edit_message">Namn</string>
     <string name="title_section4">QR</string>
     <string name="hello_world">Hello world!</string>
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
 
 </resources>

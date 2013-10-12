@@ -6,26 +6,37 @@
     android:paddingRight="16dp"
     android:orientation="vertical" >
     <EditText
-        android:id="@+id/name"
+        android:id="@+id/first_name"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/name" />
+        android:hint="@string/first_name"/>
     <EditText
+        android:id="@+id/last_name"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/last_name" />
+    <EditText
+        android:id="@+id/mail"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:hint="@string/mail" />
     <EditText
+        android:id="@+id/number"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:hint="@string/number" />
     <EditText
+        android:id="@+id/linkedin"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:hint="@string/linkedin" />
+
     <Button
+        android:id="@+id/save_button"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:layout_gravity="right"
-        android:text="@string/send" 
-        android:onClick="saveInput" />
+        android:onClick="saveInput"
+        android:text="@string/send" />
+
 </LinearLayout>
