@@ -42,8 +42,8 @@ public class MainActivity extends FragmentActivity implements
 	 Fragment fragmentTab1 = new TextInput();
 	 Fragment fragmentTab2 = new User();
 	 Fragment fragmentTab3 = new FragmentTab3();
-	 Fragment fragmentTab4 = new BarCodeScannerFragment(); 
-
+	 Fragment fragmentTab4 = new QRFragment();
+	 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
