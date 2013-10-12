@@ -5,6 +5,7 @@ import org.json.JSONException;
 
 public class Card {
 
+	
 	protected String firstName;
 	protected String lastName;
 	protected String phone;

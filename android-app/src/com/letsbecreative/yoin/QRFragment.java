@@ -10,17 +10,24 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONObject;
+import org.json.JSONException;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
+import android.app.Activity;
 
 import com.google.zxing.Result;
 import com.welcu.android.zxingfragmentlib.BarCodeScannerFragment;
 //import com.welcu.android.zxingfragmentlib.BarCodeScannerFragment.IResultCallback;
 
 public class QRFragment extends BarCodeScannerFragment {
+	
+	Activity parentActivity;
+	MainActivity.IQRCallback newCardCallback;
+	
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -32,6 +39,15 @@ public class QRFragment extends BarCodeScannerFragment {
             }
         });
     }
+	
+	@Override
+	public void onAttach(Activity parent){
+		parentActivity = parent;
+	}
+	
+	public void setNewCardCallback(MainActivity.IQRCallback callback){
+		newCardCallback = callback;
+	}
 	
 	public void requestHttp(String fileUrl){
 
@@ -72,6 +88,8 @@ public class QRFragment extends BarCodeScannerFragment {
 				if (result != null){
 					Log.d("searchContactResult", result);
 					Toast.makeText(getActivity(), "Result from http-get: " + result, Toast.LENGTH_LONG).show();
+					Card card = new Card(result);
+					newCardCallback.callback(card);
 					// TODO save the data some way
 				}else{
 					Log.e("searchContactResult", "Did not find this contact.");

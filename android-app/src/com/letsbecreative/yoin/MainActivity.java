@@ -15,6 +15,7 @@ import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends FragmentActivity implements
 		ActionBar.TabListener {
@@ -37,14 +38,29 @@ public class MainActivity extends FragmentActivity implements
 	/**
 	 *  The tabfragments
 	 */
-	 Fragment fragmentTab1 = new TextInput();
-	 Fragment fragmentTab2 = new User();
-	 Fragment fragmentTab3 = new FragmentTab3();
-	 Fragment fragmentTab4 = new QRFragment();
-	 
+	Fragment fragmentTab1 = new TextInput();
+	Fragment fragmentTab2 = new User();
+	Fragment fragmentTab3 = new FragmentTab3();
+	QRFragment fragmentTab4 = new QRFragment();
+
+	public interface IQRCallback{
+		public void callback(Card card);
+	}
+
+	private void qrCallback(Card card){
+		Toast.makeText(getApplicationContext(), "Callback called", Toast.LENGTH_LONG).show();
+	}
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		fragmentTab4.setNewCardCallback(new IQRCallback(){
+			public void callback(Card card){
+				qrCallback(card);
+			}
+		});
+		
 		setContentView(R.layout.activity_main);
 
 		// Set up the action bar.
