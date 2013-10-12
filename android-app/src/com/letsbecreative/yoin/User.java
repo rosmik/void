@@ -2,7 +2,9 @@ package com.letsbecreative.yoin;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,7 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
-import android.widget.Toast;
 
 import com.letsbecreative.yoin.ExpandableListAdapter;
 
@@ -36,14 +37,7 @@ public class User extends Fragment {
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState) {
         	
-        	Toast.makeText(getActivity(), "User onCreateView called", Toast.LENGTH_LONG).show();
-
             View rootView = inflater.inflate(R.layout.contacts, container, false);
-   /*       	String myStringArray[]={"Henrik","Micke","Malte","Limpan","Plogen","Nisse"};
-            ListView choiceListView = (ListView)rootView.findViewById(R.id.choice_list);
-	      	ArrayAdapter<String> adapter = new ArrayAdapter<String>(rootView.getContext(),android.R.layout.simple_dropdown_item_1line, myStringArray);
-	      	choiceListView.setAdapter(adapter);
-    */
             expListView = (ExpandableListView) rootView.findViewById(R.id.lvExp);
             
             if(listAdapter == null){
@@ -89,7 +83,11 @@ public class User extends Fragment {
         public void addCard(Card card){
         	String fullName = card.getFirstName() + " " + card.getLastName();
         	ArrayList<String> l = new ArrayList<String>();
-        	l.add(card.getPhone());
+        	Iterator<Map.Entry<String,String>> it = card.getEntryIterator();
+        	while(it.hasNext()){
+        		Map.Entry<String, String> entry = it.next();
+        		l.add(entry.getKey() + ": " + entry.getValue());
+        	}
         	listDataHeader.add(0, fullName);
         	listDataChild.put(fullName, l);
         	expListView.expandGroup(0);

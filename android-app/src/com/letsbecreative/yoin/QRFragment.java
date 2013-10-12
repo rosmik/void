@@ -10,6 +10,7 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONException;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -85,11 +86,17 @@ public class QRFragment extends BarCodeScannerFragment {
 			@Override
 			protected void onPostExecute(String result){
 				if (result != null){
+					Card card;
 					Log.d("searchContactResult", result);
 					Toast.makeText(getActivity(), "Result from http-get: " + result, Toast.LENGTH_LONG).show();
-					Card card = new Card(result);
+					try{
+						card = new Card(result);
+					}catch (JSONException e){
+						Log.e("Card", "Construct from json string failed while parsing string");
+						Toast.makeText(getActivity(), "Could not create Card from returned JSON", Toast.LENGTH_LONG).show();
+						return;
+					}
 					newCardCallback.callback(card);
-					// TODO save the data some way
 				}else{
 					Log.e("searchContactResult", "Did not find this contact.");
 					Toast contactToast= Toast.makeText(getActivity(), "Did not find this contact.", Toast.LENGTH_SHORT);

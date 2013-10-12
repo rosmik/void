@@ -43,7 +43,10 @@ public class TextInput extends Fragment {
                   container, false);
 		
 		final EditText firstName = (EditText) layout.findViewById(R.id.first_name);
-		
+		final EditText lastName = (EditText) layout.findViewById(R.id.last_name);
+		final EditText mail = (EditText) layout.findViewById(R.id.mail);
+		final EditText phone = (EditText) layout.findViewById(R.id.phone);
+		final EditText linkedin = (EditText) layout.findViewById(R.id.linkedin);
 		
 		
 		final Button saveButton = (Button) layout.findViewById(R.id.save_button);
@@ -51,7 +54,10 @@ public class TextInput extends Fragment {
 			public void onClick(View v) {
 				//TODO Handle when you should be able to save (all req. fields filled)
 				//TODO get the values from fields			
-				Card cardToSend = new Card("Malte", "Morran", "088723455");
+				Card cardToSend = new Card(firstName.getText().toString(), lastName.getText().toString());
+				cardToSend.addEntry("mail", mail.getText().toString());
+				cardToSend.addEntry("phone", phone.getText().toString());
+				cardToSend.addEntry("linkedin", linkedin.getText().toString());
 				/*cardToSend.setFirstName("Malte");
 				cardToSend.setLastName("Morran");
 				cardToSend.setPhone("088723455");*/
