@@ -3,8 +3,39 @@ package com.letsbecreative.yoin;
 import org.json.JSONObject;
 import org.json.JSONException;
 
+import android.util.Log;
+
 public class Card {
 
+	public Card(String firstName, String lastName, String phone, String id) {
+		super();
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.phone = phone;
+		this.id = id;
+	}
+
+	public Card(String firstName, String lastName, String phone) {
+		super();
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.phone = phone;
+	}
+
+	public Card(String jsonString) {
+		super();
+		
+		try{
+			JSONObject json = new JSONObject(jsonString);
+			this.firstName = json.optString("firstName");
+			this.lastName = json.optString("lastName");
+			this.phone = json.optString("phone");
+			this.id = json.optString("_id");
+		}catch (JSONException e){
+			Log.e("Card", "Construct from json string failed while parsing string");
+			return;
+		}
+	}
 	
 	protected String firstName;
 	protected String lastName;

@@ -48,7 +48,7 @@ public class MainActivity extends FragmentActivity implements
 	}
 
 	private void qrCallback(Card card){
-		Toast.makeText(getApplicationContext(), "Callback called", Toast.LENGTH_LONG).show();
+		Toast.makeText(getApplicationContext(), "Callback called with card: " + card.toString(), Toast.LENGTH_LONG).show();
 	}
 	
 	@Override

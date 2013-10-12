@@ -51,10 +51,10 @@ public class TextInput extends Fragment {
 			public void onClick(View v) {
 				//TODO Handle when you should be able to save (all req. fields filled)
 				//TODO get the values from fields			
-				Card cardToSend = new Card();
-				cardToSend.setFirstName("Malte");
+				Card cardToSend = new Card("Malte", "Morran", "088723455");
+				/*cardToSend.setFirstName("Malte");
 				cardToSend.setLastName("Morran");
-				cardToSend.setPhone("088723455");
+				cardToSend.setPhone("088723455");*/
 				Log.d("JSONData", cardToSend.toString());
 				requestHttpPost("http://79.136.89.243/add",cardToSend.toString());
 			}

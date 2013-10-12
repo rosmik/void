@@ -10,8 +10,6 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONObject;
-import org.json.JSONException;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -41,8 +39,9 @@ public class QRFragment extends BarCodeScannerFragment {
     }
 	
 	@Override
-	public void onAttach(Activity parent){
-		parentActivity = parent;
+	public void onAttach(Activity activity){
+		super.onAttach(activity);
+		parentActivity = activity;
 	}
 	
 	public void setNewCardCallback(MainActivity.IQRCallback callback){

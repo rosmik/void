@@ -15,11 +15,14 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:hint="@string/last_name" />
+
     <EditText
         android:id="@+id/mail"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/mail" />
+        android:hint="@string/mail"
+        android:inputType="textEmailAddress" />
+
     <EditText
         android:id="@+id/number"
         android:layout_width="fill_parent"
