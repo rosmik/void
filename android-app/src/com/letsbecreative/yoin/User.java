@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
+import android.widget.Toast;
 
 import com.letsbecreative.yoin.ExpandableListAdapter;
 
@@ -20,10 +21,10 @@ public class User extends Fragment {
          * The fragment argument representing the section number for this
          * fragment.
          */
-    	ExpandableListAdapter listAdapter;
-        ExpandableListView expListView;
-        List<String> listDataHeader;
-        HashMap<String, List<String>> listDataChild;
+    	ExpandableListAdapter listAdapter = null;
+        ExpandableListView expListView = null;
+        List<String> listDataHeader = null;
+        HashMap<String, List<String>> listDataChild = null;
         public static final String ARG_SECTION_NUMBER = "section_number";
         public User()
         {
@@ -34,6 +35,8 @@ public class User extends Fragment {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState) {
+        	
+        	Toast.makeText(getActivity(), "User onCreateView called", Toast.LENGTH_LONG).show();
 
             View rootView = inflater.inflate(R.layout.contacts, container, false);
    /*       	String myStringArray[]={"Henrik","Micke","Malte","Limpan","Plogen","Nisse"};
@@ -43,8 +46,10 @@ public class User extends Fragment {
     */
             expListView = (ExpandableListView) rootView.findViewById(R.id.lvExp);
             
-            prepareListData();
-            listAdapter = new ExpandableListAdapter(rootView.getContext(), listDataHeader, listDataChild);
+            if(listAdapter == null){
+            	prepareListData();
+            	listAdapter = new ExpandableListAdapter(rootView.getContext(), listDataHeader, listDataChild);
+            }
             
    
             // setting list adapter
@@ -79,6 +84,15 @@ public class User extends Fragment {
             listDataChild.put(listDataHeader.get(0), top250); // Header, Child data
             listDataChild.put(listDataHeader.get(1), nowShowing);
             listDataChild.put(listDataHeader.get(2), comingSoon);
+        }
+        
+        public void addCard(Card card){
+        	String fullName = card.getFirstName() + " " + card.getLastName();
+        	ArrayList<String> l = new ArrayList<String>();
+        	l.add(card.getPhone());
+        	listDataHeader.add(0, fullName);
+        	listDataChild.put(fullName, l);
+        	expListView.expandGroup(0);
         }
     
         

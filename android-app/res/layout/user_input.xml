@@ -24,15 +24,18 @@
         android:inputType="textEmailAddress" />
 
     <EditText
-        android:id="@+id/number"
+        android:id="@+id/phone"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/number" />
+        android:hint="@string/number"
+        android:inputType="phone" />
+
     <EditText
         android:id="@+id/linkedin"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/linkedin" />
+        android:hint="@string/linkedin"
+        android:inputType="textUri" />
 
     <Button
         android:id="@+id/save_button"
