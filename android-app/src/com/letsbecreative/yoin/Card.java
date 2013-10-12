@@ -27,10 +27,7 @@ public class Card {
 		this.lastName = lastName;
 		this.id = id;
 	}
-	
-	public void addEntry(String key, String value){
-		entries.put(key, value);
-	}
+
 
 	public Card(String jsonString) throws JSONException{
 		super();
@@ -91,5 +88,10 @@ public class Card {
 	public Iterator<Map.Entry<String, String>> getEntryIterator(){
 		return entries.entrySet().iterator();
 	}
-
+	public void addEntry(String key, String value){
+		entries.put(key, value);
+	}
+	public String getEntry(String key){
+		return entries.get(key);
+	}
 }
