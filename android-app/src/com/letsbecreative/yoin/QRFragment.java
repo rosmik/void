@@ -28,7 +28,7 @@ public class QRFragment extends BarCodeScannerFragment {
             @Override
             public void result(Result lastResult) {
                 Toast.makeText(getActivity(), "Scan: " + lastResult.toString(), Toast.LENGTH_LONG).show();
-                requestHttp("http://79.136.89.243/get/" +lastResult.toString());
+                requestHttp(/*"http://79.136.89.243/get/" + */ lastResult.toString());
             }
         });
     }
@@ -49,12 +49,14 @@ public class QRFragment extends BarCodeScannerFragment {
 					Log.d("requestHttp", "sent a http get");
 					StatusLine statusLine = response.getStatusLine();
 					if(statusLine.getStatusCode() == HttpStatus.SC_OK){
+						Log.d("requestHttp", "Got 200 OK");
 						ByteArrayOutputStream out = new ByteArrayOutputStream();
 						response.getEntity().writeTo(out);
 						out.close();
 						responseString = out.toString();
 					} else{
 						//Closes the connection.
+						Log.e("requestHttp", "Status code != 200 OK");
 						response.getEntity().getContent().close();
 						throw new IOException(statusLine.getReasonPhrase());
 					}

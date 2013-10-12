@@ -2,8 +2,6 @@ package com.letsbecreative.yoin;
 
 import java.util.Locale;
 
-import com.welcu.android.zxingfragmentlib.BarCodeScannerFragment;
-
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
