@@ -43,10 +43,6 @@ public class MainActivity extends FragmentActivity implements
 	Fragment fragmentTab3 = new FragmentTab3();
 	QRFragment qrReaderTab = new QRFragment();
 
-	public interface IQRCallback{
-		public void callback(Card card);
-	}
-
 	private void qrCallback(Card card){
 		Toast.makeText(getApplicationContext(), "Callback called with card: " + card.toString(), Toast.LENGTH_LONG).show();
 		cardListTab.addCard(card);
@@ -57,7 +53,7 @@ public class MainActivity extends FragmentActivity implements
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		qrReaderTab.setNewCardCallback(new IQRCallback(){
+		qrReaderTab.setNewCardCallback(new QRFragment.IQRCallback(){
 			public void callback(Card card){
 				qrCallback(card);
 			}

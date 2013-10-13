@@ -24,8 +24,12 @@ import com.welcu.android.zxingfragmentlib.BarCodeScannerFragment;
 
 public class QRFragment extends BarCodeScannerFragment {
 	
+	public interface IQRCallback{
+		public void callback(Card card);
+	}
+	
 	Activity parentActivity;
-	MainActivity.IQRCallback newCardCallback;
+	IQRCallback newCardCallback;
 	
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,7 +49,7 @@ public class QRFragment extends BarCodeScannerFragment {
 		parentActivity = activity;
 	}
 	
-	public void setNewCardCallback(MainActivity.IQRCallback callback){
+	public void setNewCardCallback(IQRCallback callback){
 		newCardCallback = callback;
 	}
 	
@@ -96,7 +100,13 @@ public class QRFragment extends BarCodeScannerFragment {
 						Toast.makeText(getActivity(), "Could not create Card from returned JSON", Toast.LENGTH_LONG).show();
 						return;
 					}
-					newCardCallback.callback(card);
+					if(newCardCallback != null){
+						newCardCallback.callback(card);
+					}
+					else {
+						Log.e("QRFragment", "No callback set for returning Card.");
+						throw new RuntimeException();
+					}
 				}else{
 					Log.e("searchContactResult", "Did not find this contact.");
 					Toast contactToast= Toast.makeText(getActivity(), "Did not find this contact.", Toast.LENGTH_SHORT);
