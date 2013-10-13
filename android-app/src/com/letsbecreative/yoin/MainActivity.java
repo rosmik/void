@@ -2,8 +2,6 @@ package com.letsbecreative.yoin;
 
 import java.util.Locale;
 
-import com.welcu.android.zxingfragmentlib.BarCodeScannerFragment;
-
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
@@ -17,6 +15,7 @@ import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends FragmentActivity implements
 		ActionBar.TabListener {
@@ -39,14 +38,27 @@ public class MainActivity extends FragmentActivity implements
 	/**
 	 *  The tabfragments
 	 */
-	 Fragment fragmentTab1 = new FragmentTab1();
-	 Fragment fragmentTab2 = new FragmentTab2();
-	 Fragment fragmentTab3 = new FragmentTab3();
-	 Fragment fragmentTab4 = new BarCodeScannerFragment(); 
+	Fragment fragmentTab1 = new TextInput();
+	User cardListTab = new User();
+	Fragment fragmentTab3 = new FragmentTab3();
+	QRFragment qrReaderTab = new QRFragment();
 
+	private void qrCallback(Card card){
+		Toast.makeText(getApplicationContext(), "Callback called with card: " + card.toString(), Toast.LENGTH_LONG).show();
+		cardListTab.addCard(card);
+		mViewPager.setCurrentItem(1);
+	}
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		qrReaderTab.setNewCardCallback(new QRFragment.IQRCallback(){
+			public void callback(Card card){
+				qrCallback(card);
+			}
+		});
+		
 		setContentView(R.layout.activity_main);
 
 		// Set up the action bar.
@@ -128,11 +140,11 @@ public class MainActivity extends FragmentActivity implements
 			case 0:
 				return fragmentTab1;
 			case 1:
-				return fragmentTab2;
+				return cardListTab;
 			case 2:
 				return fragmentTab3;
 			case 3:
-				return fragmentTab4;
+				return qrReaderTab;
 			}
 			return null;
 		}

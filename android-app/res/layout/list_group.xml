@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/lblListHeader"
+    android:layout_width="fill_parent"
+    android:layout_height="?android:attr/listPreferredItemHeight"
+    android:paddingLeft="32dp"
+    android:paddingTop="16dp"
+    android:paddingBottom="16dp"
+    android:textColor="#bbbbbb"
+    android:textSize="20sp" />
