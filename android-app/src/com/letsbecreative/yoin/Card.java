@@ -7,7 +7,7 @@ import java.util.Map;
 import org.json.JSONObject;
 import org.json.JSONException;
 
-public class Card {
+public class Card{
 	protected String firstName;
 	protected String lastName;
 	protected String id;
@@ -43,6 +43,18 @@ public class Card {
 		while(it.hasNext()){
 			String key = (String) it.next();
 			addEntry(key, json.getString(key));
+		}
+	}
+	
+	public Card(Card oldCard){
+		this.id = oldCard.id;
+		this.firstName = oldCard.firstName;
+		this.lastName = oldCard.lastName;
+		
+		Iterator<Map.Entry<String,String>> it = oldCard.entries.entrySet().iterator();
+		while(it.hasNext()){
+			Map.Entry<String, String> entry = it.next();
+			this.entries.put(new String(entry.getKey()), new String(entry.getKey()));
 		}
 	}
 	

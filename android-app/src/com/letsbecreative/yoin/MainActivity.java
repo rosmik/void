@@ -43,10 +43,14 @@ public class MainActivity extends FragmentActivity implements
 	Fragment fragmentTab3 = new FragmentTab3();
 	QRFragment qrReaderTab = new QRFragment();
 
-	private void qrCallback(Card card){
-		Toast.makeText(getApplicationContext(), "Callback called with card: " + card.toString(), Toast.LENGTH_LONG).show();
-		cardListTab.addCard(card);
-		mViewPager.setCurrentItem(1);
+	private void qrCallback(final Card card){
+		this.runOnUiThread(new Runnable(){
+			public void run(){
+				Toast.makeText(getApplicationContext(), "Callback called with card: " + card.toString(), Toast.LENGTH_LONG).show();
+				cardListTab.addCard(card);
+				mViewPager.setCurrentItem(1);
+			}
+		});
 	}
 	
 	@Override
