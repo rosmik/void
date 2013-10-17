@@ -12,6 +12,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.protocol.HTTP;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
@@ -91,11 +92,11 @@ public class TextInput extends Fragment {
 				HttpPost httpPost = new HttpPost(uri[0]);
 				String responseString = null;
 				//httpPost.setHeader("Accept", "application/json");
-				httpPost.setHeader("Content-type", "application/json");
+				httpPost.setHeader("Content-type", "application/json;charset=utf-8");
 
 
 				try {
-					httpPost.setEntity(new StringEntity(uri[1]));
+					httpPost.setEntity(new StringEntity(uri[1], HTTP.UTF_8));
 					Log.d("json",uri[1]);
 					Log.d("Header",httpPost.getFirstHeader("Content-type").toString());
 					Log.d("requestHttp", "Trying to send http Post");
