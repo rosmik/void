@@ -5,6 +5,7 @@ import random
 from pymongo import MongoClient
 import base64
 import os
+import json
 
 app = Flask(__name__)
 
@@ -14,13 +15,12 @@ db = client.yoin
 def generateId():
   return base64.urlsafe_b64encode(os.urandom(15)).decode('ascii') # 120 bits of randomness
 
-ids = dict()
-
 def makeErrorResponse(error, message):
   return make_response(jsonify({'error': error, 'Message': message}), error)
 
-def makeDocument(_id, name, phone):
-  return {'_id': _id, 'Name': name, 'Phone': phone}
+def makeDocument(_id, data):
+  data['_id'] = _id
+  return data.copy()
 
 def insertDocument(document):
   db.cards.insert(document)
@@ -62,14 +62,20 @@ def index():
 
 @app.route('/add', methods=['POST'])
 def add():
+  print('Data: ' + request.data)
+  print('Values: ' + str(request.values))
+  print('Blueprint: ' + str(request.blueprint))
+  print('Headers: ' + str(request.headers))
   if not request.json:
     return makeErrorResponse(400, 'Bad Post')
 
-  newId = dict()
-  newId['name'] = request.json['name']
-  newId['phone'] = request.json['phone']
+  print(type(request.get_json()))
+
   idNumber = generateId()
-  insertDocument(makeDocument(idNumber, request.json['name'], request.json['phone']))
+
+  insertDocument(makeDocument(idNumber, request.get_json()))
+  
+  print('Added card with id: ' + str(idNumber))
 
   return str(idNumber)
 
@@ -94,7 +100,6 @@ def getCard(idNumber):
   print(idNumber)
   document = getDocument(idNumber)
   if document:
-    del document['_id']
     return jsonify(document)
   else :
     return makeErrorResponse(404, 'Not Found')
@@ -106,7 +111,6 @@ def getVcard(idNumber):
   if not document:
     return makeErrorResponse(404, 'Not Found')
   
-  del document['_id']
   try:
     name = document['Name']
   except KeyError:

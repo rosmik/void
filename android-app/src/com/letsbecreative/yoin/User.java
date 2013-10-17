@@ -2,7 +2,9 @@ package com.letsbecreative.yoin;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -20,10 +22,10 @@ public class User extends Fragment {
          * The fragment argument representing the section number for this
          * fragment.
          */
-    	ExpandableListAdapter listAdapter;
-        ExpandableListView expListView;
-        List<String> listDataHeader;
-        HashMap<String, List<String>> listDataChild;
+    	ExpandableListAdapter listAdapter = null;
+        ExpandableListView expListView = null;
+        List<String> listDataHeader = null;
+        HashMap<String, List<String>> listDataChild = null;
         public static final String ARG_SECTION_NUMBER = "section_number";
         public User()
         {
@@ -34,17 +36,14 @@ public class User extends Fragment {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState) {
-
+        	
             View rootView = inflater.inflate(R.layout.contacts, container, false);
-   /*       	String myStringArray[]={"Henrik","Micke","Malte","Limpan","Plogen","Nisse"};
-            ListView choiceListView = (ListView)rootView.findViewById(R.id.choice_list);
-	      	ArrayAdapter<String> adapter = new ArrayAdapter<String>(rootView.getContext(),android.R.layout.simple_dropdown_item_1line, myStringArray);
-	      	choiceListView.setAdapter(adapter);
-    */
             expListView = (ExpandableListView) rootView.findViewById(R.id.lvExp);
             
-            prepareListData();
-            listAdapter = new ExpandableListAdapter(rootView.getContext(), listDataHeader, listDataChild);
+            if(listAdapter == null){
+            	prepareListData();
+            	listAdapter = new ExpandableListAdapter(rootView.getContext(), listDataHeader, listDataChild);
+            }
             
    
             // setting list adapter
@@ -79,6 +78,19 @@ public class User extends Fragment {
             listDataChild.put(listDataHeader.get(0), top250); // Header, Child data
             listDataChild.put(listDataHeader.get(1), nowShowing);
             listDataChild.put(listDataHeader.get(2), comingSoon);
+        }
+        
+        public void addCard(Card card){
+        	String fullName = card.getFirstName() + " " + card.getLastName();
+        	ArrayList<String> l = new ArrayList<String>();
+        	Iterator<Map.Entry<String,String>> it = card.getEntryIterator();
+        	while(it.hasNext()){
+        		Map.Entry<String, String> entry = it.next();
+        		l.add(entry.getKey() + ": " + entry.getValue());
+        	}
+        	listDataHeader.add(0, fullName);
+        	listDataChild.put(fullName, l);
+        	expListView.expandGroup(0);
         }
     
         

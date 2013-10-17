@@ -23,6 +23,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 public class TextInput extends Fragment {
 	/**
@@ -30,6 +31,7 @@ public class TextInput extends Fragment {
 	 * fragment.
 	 */
 	public static final String ARG_SECTION_NUMBER = "section_number";
+	TextView addedAddress;
 
 	public TextInput() 
 	{       }
@@ -43,18 +45,21 @@ public class TextInput extends Fragment {
                   container, false);
 		
 		final EditText firstName = (EditText) layout.findViewById(R.id.first_name);
-		
+		final EditText lastName = (EditText) layout.findViewById(R.id.last_name);
+		final EditText mail = (EditText) layout.findViewById(R.id.mail);
+		final EditText phone = (EditText) layout.findViewById(R.id.phone);
+		final EditText linkedin = (EditText) layout.findViewById(R.id.linkedin);
+		addedAddress = (TextView) layout.findViewById(R.id.addedCardAddress);
 		
 		
 		final Button saveButton = (Button) layout.findViewById(R.id.save_button);
 		saveButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				//TODO Handle when you should be able to save (all req. fields filled)
-				//TODO get the values from fields			
-				Card cardToSend = new Card();
-				cardToSend.setFirstName("Malte");
-				cardToSend.setLastName("Morran");
-				cardToSend.setPhone("088723455");
+				Card cardToSend = new Card(firstName.getText().toString(), lastName.getText().toString());
+				cardToSend.addEntry("mail", mail.getText().toString());
+				cardToSend.addEntry("phone", phone.getText().toString());
+				cardToSend.addEntry("linkedin", linkedin.getText().toString());
 				Log.d("JSONData", cardToSend.toString());
 				requestHttpPost("http://79.136.89.243/add",cardToSend.toString());
 			}
@@ -107,6 +112,8 @@ public class TextInput extends Fragment {
 				if (result != null){
 					Log.d("searchContactResult", result);
 					Toast.makeText(getActivity(), "Saved your data!: " + result, Toast.LENGTH_LONG).show();
+					addedAddress.setText("Get your card at: http://http://79.136.89.243/get/" + result);
+			
 				}else{
 					Log.e("searchContactResult", "Failed saving user-data" );
 					Toast contactToast= Toast.makeText(getActivity(), "Failed to save your data", Toast.LENGTH_SHORT);
