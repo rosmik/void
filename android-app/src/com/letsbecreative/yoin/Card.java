@@ -7,7 +7,10 @@ import java.util.Map;
 import org.json.JSONObject;
 import org.json.JSONException;
 
-public class Card{
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Card implements Parcelable{
 	protected String firstName;
 	protected String lastName;
 	protected String id;
@@ -26,9 +29,17 @@ public class Card{
 		this.id = id;
 	}
 
+	public Card(Parcel inParcel){
+		super();
+		this.firstName = inParcel.readString();
+		this.lastName = inParcel.readString();
+		this.id = inParcel.readString();
+		this.entries = inParcel.readHashMap(null)
+		
+	}
 
 	public Card(String jsonString) throws JSONException{
-		super();
+		super(); 	
 
 		Iterator<?> it;
 		JSONObject json = new JSONObject(jsonString);
@@ -103,5 +114,20 @@ public class Card{
 	}
 	public String getEntry(String key){
 		return entries.get(key);
+	}
+
+	@Override
+	public int describeContents() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel out, int flags) {
+		// TODO Auto-generated method stub
+		out.writeString(firstName);
+		out.writeString(lastName);
+		out.writeString(id);
+		out.writeMap(entries);
 	}
 }
