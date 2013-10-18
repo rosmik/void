@@ -45,13 +45,18 @@ public class TextInput extends Fragment {
 
 	public TextInput() 
 	{       }
-	public String identityNumber;
+	public String identityNumber = null;
+	public String getAddress = "http://79.136.89.243/get/";
 	public ImageView QRView;
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		//View rootView = inflater.inflate(R.layout.user_input, container, false);
-		//return rootView;
+		if (savedInstanceState != null){
+			
+			identityNumber = savedInstanceState.getString("id");
+			Log.d("restoring state", identityNumber);
+		}
+		
 		LinearLayout layout = (LinearLayout) inflater.inflate(R.layout.user_input,
 				container, false);
 
@@ -77,9 +82,25 @@ public class TextInput extends Fragment {
 		});
 
 		QRView = (ImageView) layout.findViewById(R.id.qr_view);
+		
+		if (identityNumber != null){
+			generateQR();
+			QRView.setVisibility(View.VISIBLE);
+		}
+		
 
 		return layout;
 	}
+	
+	@Override
+	public void onSaveInstanceState(Bundle savedUserState){
+		super.onSaveInstanceState(savedUserState);
+		
+		savedUserState.putString("id", identityNumber);
+		savedUserState.putAll(getArguments());
+		
+	}
+	
 
 	public void requestHttpPost(String fileUrl, String jsonString){
 
@@ -116,7 +137,7 @@ public class TextInput extends Fragment {
 				} catch (ClientProtocolException e) {
 					//TODO Handle problems..
 				} catch (IOException e) {
-					//TODO Handle problems..
+					//TODO Handle problems..s
 				}
 				return responseString;
 			}
@@ -125,9 +146,11 @@ public class TextInput extends Fragment {
 				if (result != null){
 					Log.d("searchContactResult", result);
 					Toast.makeText(getActivity(), "Saved your data!: " + result, Toast.LENGTH_LONG).show();
-					addedAddress.setText("Get your card at: http://http://79.136.89.243/get/" + result);
+					addedAddress.setText("Get your card at: http://79.136.89.243/get/" + result);
 					identityNumber = result;
 					generateQR();
+					QRView.setVisibility(View.VISIBLE);
+					
 
 				}else{
 					Log.e("searchContactResult", "Failed saving user-data" );
@@ -148,11 +171,11 @@ public class TextInput extends Fragment {
 
 		int size = 200;// Cubic size of QR code
 		Bitmap bitmapQR = null; // Initialize bitmap, only one is necessary for each user, can be updated
-		//		ImageView QRView = (ImageView) layout.findViewById(R.id.qr_view);
-		//		final ImageView QRView;
+		String qrInformation = getAddress + identityNumber;
+		Log.d("qrinformation", qrInformation);
 		com.google.zxing.Writer QRwriter = new QRCodeWriter();// creates a writer object
 		try{
-			BitMatrix matrix = QRwriter.encode(identityNumber, BarcodeFormat.QR_CODE,size, size); // creates a matrix from the given string to specified format
+			BitMatrix matrix = QRwriter.encode(qrInformation, BarcodeFormat.QR_CODE,size, size); // creates a matrix from the given string to specified format
 			bitmapQR = Bitmap.createBitmap(size, size, Config.ARGB_4444); // Setup for bitmap, each pixel is stored in one byte.hic
 			for (int i = 0; i < size; i++){
 				for (int j = 0; j < size; j++){
