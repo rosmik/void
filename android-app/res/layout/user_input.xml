@@ -44,6 +44,31 @@
         android:layout_gravity="right"
         android:onClick="saveInput"
         android:text="@string/send" />
+     <TextView
+        android:id="@+id/name_t"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="" 
+        android:visibility="invisible" />
+    <TextView
+        android:id="@+id/mail_t"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="" 
+        android:visibility="invisible" />
+    <TextView
+        android:id="@+id/phone_t"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="" 
+        android:visibility="invisible" />
+    <TextView
+        android:id="@+id/linkedin_t"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="" 
+        android:visibility="invisible" />
+    
     <ImageView
         android:id="@+id/qr_view"
         android:layout_width="200dp"
@@ -56,10 +81,8 @@
     	android:scaleType="fitStart"
     	android:adjustViewBounds="true"
     	android:visibility="invisible"  />
-    <TextView
-        android:id="@+id/addedCardAddress"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="" />
+   
+    
+    
  	
 </LinearLayout>

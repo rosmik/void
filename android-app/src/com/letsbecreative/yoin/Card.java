@@ -1,17 +1,22 @@
 package com.letsbecreative.yoin;
 
-import java.util.HashMap;
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.json.JSONObject;
 import org.json.JSONException;
 
-public class Card{
+import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Card implements Parcelable,Comparable<Card>{
 	protected String firstName;
 	protected String lastName;
 	protected String id;
-	protected Map<String, String> entries = new HashMap<String,String>();
+	protected Map<String, String> entries = new TreeMap<String,String>();
 
 	public Card(String firstName, String lastName) {
 		super();
@@ -26,9 +31,25 @@ public class Card{
 		this.id = id;
 	}
 
+	public Card(Parcel inParcel){
+		super();
+		this.firstName = inParcel.readString();
+		this.lastName = inParcel.readString();
+		this.id = inParcel.readString();
+		//this.entries = inParcel.readMap(entries);
+		Bundle bundle = new Bundle();
+		bundle = inParcel.readBundle();
+		try{
+		this.entries = (Map<String,String>)bundle.getSerializable("HashMap");
+		}catch(ClassCastException e){
+			e.printStackTrace();
+			throw new RuntimeException();
+		}
+		
+	}
 
 	public Card(String jsonString) throws JSONException{
-		super();
+		super(); 	
 
 		Iterator<?> it;
 		JSONObject json = new JSONObject(jsonString);
@@ -103,5 +124,47 @@ public class Card{
 	}
 	public String getEntry(String key){
 		return entries.get(key);
+	}
+	public String getIndexed(int pos){
+		Iterator<Map.Entry<String,String>> it = entries.entrySet().iterator();
+		for(int i = 0; i < pos; ++i){
+			it.next();
+		}
+		Map.Entry<String,String> entry = it.next();
+		return entry.getKey() + ": " + entry.getValue();
+	}
+	public int countEntries(){
+		return this.entries.size();
+	}
+
+	@Override
+	public int describeContents() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel out, int flags) {
+		// TODO Auto-generated method stub
+		out.writeString(firstName);
+		out.writeString(lastName);
+		out.writeString(id);
+		//out.writeMap(entries);
+		out.writeMap(entries);
+		Bundle bundle = new Bundle();
+		bundle.putSerializable("HashMap", (Serializable) entries);
+		out.writeBundle(bundle);
+	}
+
+	@Override
+	public int compareTo(Card another) {
+		int res = firstName.compareTo(another.firstName);
+		if(res==0){
+			res = lastName.compareTo(another.lastName);
+		}
+		if(res==0){
+			res = id.compareTo(another.id);
+		}
+		return res;
 	}
 }
