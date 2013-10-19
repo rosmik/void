@@ -1,6 +1,9 @@
 package com.letsbecreative.yoin;
 
+import java.util.List;
 import java.util.Locale;
+import java.util.Vector;
+import java.util.Collections;
 
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
@@ -48,16 +51,26 @@ public class MainActivity extends FragmentActivity implements
 	User cardListTab = new User();
 	Fragment fragmentTab3 = new FragmentTab3();
 	QRFragment qrReaderTab = new QRFragment();
+	
+	DatabaseHandler databaseHandler;
+	Vector<Card> cardVector = new Vector<Card>();
 
 	private void qrCallback(final Card card){
 		this.runOnUiThread(new Runnable(){
 			public void run(){
 				Toast.makeText(getApplicationContext(), "Callback called with card: " + card.toString(), Toast.LENGTH_LONG).show();
-				cardListTab.addCard(card);
+				addCard(card);
 				mViewPager.setCurrentItem(1);
 			}
 		});
 	}
+	
+	public void addCard(Card card){
+		this.cardVector.add(card);
+		Collections.sort((List<Card>)cardVector);
+		cardListTab.listAdapter.notifyDataSetChanged();
+		this.databaseHandler.addContact(card);
+    }
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +81,10 @@ public class MainActivity extends FragmentActivity implements
 				qrCallback(card);
 			}
 		});
+		
+		databaseHandler = new DatabaseHandler(getBaseContext(), "yoinDatabase", null , 1);
+		
+		databaseHandler.getContacts(cardVector);
 		
 		setContentView(R.layout.activity_main);
 

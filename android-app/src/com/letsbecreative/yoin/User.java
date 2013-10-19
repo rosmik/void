@@ -1,11 +1,5 @@
 package com.letsbecreative.yoin;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -24,12 +18,12 @@ public class User extends Fragment {
          */
     	ExpandableListAdapter listAdapter = null;
         ExpandableListView expListView = null;
-        List<String> listDataHeader = null;
-        HashMap<String, List<String>> listDataChild = null;
         public static final String ARG_SECTION_NUMBER = "section_number";
+        private MainActivity parent;
+        
         public User()
         {
-        	
+        	super();
         }
 	        
 
@@ -40,58 +34,15 @@ public class User extends Fragment {
             View rootView = inflater.inflate(R.layout.contacts, container, false);
             expListView = (ExpandableListView) rootView.findViewById(R.id.lvExp);
             
+            this.parent = (MainActivity) getActivity();            
+            if(this.parent == null) throw new RuntimeException();
             if(listAdapter == null){
-            	prepareListData();
-            	listAdapter = new ExpandableListAdapter(rootView.getContext(), listDataHeader, listDataChild);
+            	listAdapter = new ExpandableListAdapter(rootView.getContext(), parent.cardVector);
             }
             
    
             // setting list adapter
             expListView.setAdapter(listAdapter);
             return rootView;
-        }
-        private void prepareListData() {
-            listDataHeader = new ArrayList<String>();
-            listDataChild = new HashMap<String, List<String>>();
-     
-            // Adding child data
-            listDataHeader.add("Henrik");
-            listDataHeader.add("Malte");
-            listDataHeader.add("Nisse");
-     
-            // Adding child data
-            List<String> top250 = new ArrayList<String>();
-            top250.add("hnkryden@gmail.com");
-            top250.add("0708132759");
-            top250.add("Linköping");
-     
-            List<String> nowShowing = new ArrayList<String>();
-            nowShowing.add("mortiz@gmail.com");
-            nowShowing.add("0708821123312");
-            nowShowing.add("Linköping");
-     
-            List<String> comingSoon = new ArrayList<String>();
-            comingSoon.add("sfdsdfdsf@sdffds");
-            comingSoon.add("708486045645546");
-            comingSoon.add("Linköping");
-     
-            listDataChild.put(listDataHeader.get(0), top250); // Header, Child data
-            listDataChild.put(listDataHeader.get(1), nowShowing);
-            listDataChild.put(listDataHeader.get(2), comingSoon);
-        }
-        
-        public void addCard(Card card){
-        	String fullName = card.getFirstName() + " " + card.getLastName();
-        	ArrayList<String> l = new ArrayList<String>();
-        	Iterator<Map.Entry<String,String>> it = card.getEntryIterator();
-        	while(it.hasNext()){
-        		Map.Entry<String, String> entry = it.next();
-        		l.add(entry.getKey() + ": " + entry.getValue());
-        	}
-        	listDataHeader.add(0, fullName);
-        	listDataChild.put(fullName, l);
-        	expListView.expandGroup(0);
-        }
-    
-        
+        }        
     }
