@@ -20,5 +20,6 @@
     <string name="first_name">First Name</string>
     <string name="last_name">Last Name</string>
     <string name="qr_code">QR code</string>
+    <string name="title_activity_update_personal_data">UpdatePersonalData</string>
 
 </resources>

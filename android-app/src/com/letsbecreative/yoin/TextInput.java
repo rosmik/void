@@ -19,6 +19,7 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.Color;
@@ -76,16 +77,18 @@ public class TextInput extends Fragment {
 		//addedAddress = (TextView) layout.findViewById(R.id.addedCardAddress);
 
 
-		final Button saveButton = (Button) layout.findViewById(R.id.save_button);
+		final Button saveButton = (Button) layout.findViewById(R.id.update_user_button);
 		saveButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				//TODO Handle when you should be able to save (all req. fields filled)
-				personalCard = new Card(firstName.getText().toString(), lastName.getText().toString());
+				/*personalCard = new Card(firstName.getText().toString(), lastName.getText().toString());
 				personalCard.addEntry("mail", mail.getText().toString());
 				personalCard.addEntry("phone", phone.getText().toString());
 				personalCard.addEntry("linkedin", linkedin.getText().toString());
 				Log.d("JSONData", personalCard.toString());
-				requestHttpPost("http://79.136.89.243/add", personalCard.toString());
+				requestHttpPost("http://79.136.89.243/add", personalCard.toString());*/
+				Intent updatePersonalDataIntent = new Intent(getActivity(), UpdatePersonalData.class);
+				startActivity(updatePersonalDataIntent);
 			}
 		});
 
@@ -94,6 +97,9 @@ public class TextInput extends Fragment {
 		mail_t = (TextView) layout.findViewById(R.id.mail_t);
 		phone_t = (TextView) layout.findViewById(R.id.phone_t);
 		linkedin_t = (TextView) layout.findViewById(R.id.linkedin_t);
+		
+		//Intent updateData = getIntent();
+		
 		
 		if (personalCard != null){
 			showPersonalCard();
