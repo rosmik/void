@@ -1,5 +1,6 @@
 package com.letsbecreative.yoin;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -7,6 +8,7 @@ import java.util.Map;
 import org.json.JSONObject;
 import org.json.JSONException;
 
+import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -34,7 +36,15 @@ public class Card implements Parcelable{
 		this.firstName = inParcel.readString();
 		this.lastName = inParcel.readString();
 		this.id = inParcel.readString();
-		this.entries = inParcel.readHashMap(null)
+		//this.entries = inParcel.readMap(entries);
+		Bundle bundle = new Bundle();
+		bundle = inParcel.readBundle();
+		try{
+		this.entries = (Map<String,String>)bundle.getSerializable("HashMap");
+		}catch(ClassCastException e){
+			e.printStackTrace();
+			throw new RuntimeException();
+		}
 		
 	}
 
@@ -128,6 +138,10 @@ public class Card implements Parcelable{
 		out.writeString(firstName);
 		out.writeString(lastName);
 		out.writeString(id);
+		//out.writeMap(entries);
 		out.writeMap(entries);
+		Bundle bundle = new Bundle();
+		bundle.putSerializable("HashMap", (Serializable) entries);
+		out.writeBundle(bundle);
 	}
 }
