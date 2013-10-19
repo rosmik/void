@@ -97,7 +97,7 @@ public class TextInput extends Fragment {
 		super.onSaveInstanceState(savedUserState);
 		
 		savedUserState.putString("id", identityNumber);
-		savedUserState.putAll(getArguments());
+	//	savedUserState.putAll(getArguments());
 		
 	}
 	

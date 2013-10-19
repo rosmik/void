@@ -4,6 +4,7 @@ import java.util.Locale;
 
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -100,6 +101,8 @@ public class MainActivity extends FragmentActivity implements
 					.setTabListener(this));
 		}
 	}
+	
+	
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -202,5 +205,6 @@ public class MainActivity extends FragmentActivity implements
 			return rootView;
 		}
 	}
+
 
 }
