@@ -110,21 +110,23 @@ public class MainActivity extends FragmentActivity implements
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		Log.d("onCreateOptionsMenu", "in optionsmenu");
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		
+	
 		// Inflate the options menu from XML
 	    MenuInflater inflater = getMenuInflater();
 	    inflater.inflate(R.menu.search, menu);
 
 	    // Get the SearchView and set the searchable configuration
 	    SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+	    if(searchManager == null) {
+	    	throw(new RuntimeException());
+	    }
 	    SearchView searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
+	    if(searchView == null) {
+	    	throw(new RuntimeException());
+	    }
 	    // Assumes current activity is the searchable activity
-	    searchView.setSearchableInfo(searchManager.getSearchableInfo(new ComponentName(this,"SearchActivity")));
+	    searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
 	    searchView.setIconifiedByDefault(false); // Do not iconify the widget; expand it by default
-
-		
 		
 		return true;
 	}
