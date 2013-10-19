@@ -43,12 +43,17 @@ public class TextInput extends Fragment {
 	 */
 	public static final String ARG_SECTION_NUMBER = "section_number";
 	//TextView addedAddress;
+	public ImageView QRView;
+	public TextView name_t;
+	public TextView mail_t;
+	public TextView phone_t;
+	public TextView linkedin_t;
 
 	public TextInput() 
 	{       }
 	//public String identityNumber = null;
 	public String getAddress = "http://79.136.89.243/get/";
-	public ImageView QRView;
+	
 	public Card personalCard = null;
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -85,12 +90,14 @@ public class TextInput extends Fragment {
 		});
 
 		QRView = (ImageView) layout.findViewById(R.id.qr_view);
+		name_t = (TextView) layout.findViewById(R.id.name_t);
+		mail_t = (TextView) layout.findViewById(R.id.mail_t);
+		phone_t = (TextView) layout.findViewById(R.id.phone_t);
+		linkedin_t = (TextView) layout.findViewById(R.id.linkedin_t);
 		
 		if (personalCard != null){
-			generateQR();
-			QRView.setVisibility(View.VISIBLE);
+			showPersonalCard();
 		}
-		
 
 		return layout;
 	}
@@ -151,9 +158,8 @@ public class TextInput extends Fragment {
 					Toast.makeText(getActivity(), "Saved your data!: " + result, Toast.LENGTH_LONG).show();
 					//addedAddress.setText("Get your card at: http://79.136.89.243/get/" + result);
 					personalCard.id = result;
-					generateQR();
+					showPersonalCard();
 					QRView.setVisibility(View.VISIBLE);
-					
 
 				}else{
 					Log.e("searchContactResult", "Failed saving user-data" );
@@ -189,9 +195,20 @@ public class TextInput extends Fragment {
 			generateFail.printStackTrace();
 		}
 		if (bitmapQR != null){
-			
 			QRView.setImageBitmap(bitmapQR);
-
 		}
+	}
+	
+	private void showPersonalCard(){
+		generateQR();
+		QRView.setVisibility(View.VISIBLE);
+		name_t.setText(personalCard.firstName + " " + personalCard.lastName);
+		name_t.setVisibility(View.VISIBLE);
+		mail_t.setText(personalCard.getEntry("mail"));
+		mail_t.setVisibility(View.VISIBLE);
+		phone_t.setText(personalCard.getEntry("phone"));
+		phone_t.setVisibility(View.VISIBLE);
+		linkedin_t.setText(personalCard.getEntry("linkedin"));
+		linkedin_t.setVisibility(View.VISIBLE);
 	}
 }
