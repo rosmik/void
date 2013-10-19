@@ -20,5 +20,9 @@
     <string name="first_name">First Name</string>
     <string name="last_name">Last Name</string>
     <string name="qr_code">QR code</string>
+    <string name="app_label">Yoin</string>
+    <string name="search_hint">Search cards</string>
+    <string name="title_activity_search">Search</string>
+    <string name="menu_search">Search</string>
 
 </resources>

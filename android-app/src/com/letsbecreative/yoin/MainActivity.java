@@ -4,18 +4,24 @@ import java.util.Locale;
 
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
+import android.app.SearchManager;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.content.ComponentName;
 
 public class MainActivity extends FragmentActivity implements
 		ActionBar.TabListener {
@@ -103,8 +109,25 @@ public class MainActivity extends FragmentActivity implements
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
+		Log.d("onCreateOptionsMenu", "in optionsmenu");
+	
+		// Inflate the options menu from XML
+	    MenuInflater inflater = getMenuInflater();
+	    inflater.inflate(R.menu.search, menu);
+
+	    // Get the SearchView and set the searchable configuration
+	    SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+	    if(searchManager == null) {
+	    	throw(new RuntimeException());
+	    }
+	    SearchView searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
+	    if(searchView == null) {
+	    	throw(new RuntimeException());
+	    }
+	    // Assumes current activity is the searchable activity
+	    searchView.setSearchableInfo(searchManager.getSearchableInfo(new ComponentName("com.letsbecreative.yoin", "com.letsbecreative.yoin.SearchActivity")));
+	    searchView.setIconifiedByDefault(true); 
+		
 		return true;
 	}
 
