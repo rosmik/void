@@ -3,5 +3,4 @@
     android:label="@string/app_label"
     android:hint="@string/search_hint" >
     
-
 </searchable>

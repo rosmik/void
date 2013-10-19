@@ -25,14 +25,14 @@
         </activity>
         <activity
             android:name="com.letsbecreative.yoin.SearchActivity"
-            android:label="@string/title_activity_search" >
+            android:label="@string/title_activity_search">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
 
-<!--             <meta-data
+            <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="MainActivity" /> -->
+                android:value="com.letsbecreative.yoin.MainActivity" />
             <meta-data
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />

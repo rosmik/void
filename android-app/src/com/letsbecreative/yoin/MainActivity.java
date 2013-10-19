@@ -125,8 +125,8 @@ public class MainActivity extends FragmentActivity implements
 	    	throw(new RuntimeException());
 	    }
 	    // Assumes current activity is the searchable activity
-	    searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-	    searchView.setIconifiedByDefault(false); // Do not iconify the widget; expand it by default
+	    searchView.setSearchableInfo(searchManager.getSearchableInfo(new ComponentName("com.letsbecreative.yoin", "com.letsbecreative.yoin.SearchActivity")));
+	    searchView.setIconifiedByDefault(true); 
 		
 		return true;
 	}
