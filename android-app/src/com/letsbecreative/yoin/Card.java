@@ -1,5 +1,6 @@
 package com.letsbecreative.yoin;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -7,7 +8,11 @@ import java.util.Map;
 import org.json.JSONObject;
 import org.json.JSONException;
 
-public class Card{
+import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Card implements Parcelable{
 	protected String firstName;
 	protected String lastName;
 	protected String id;
@@ -26,9 +31,25 @@ public class Card{
 		this.id = id;
 	}
 
+	public Card(Parcel inParcel){
+		super();
+		this.firstName = inParcel.readString();
+		this.lastName = inParcel.readString();
+		this.id = inParcel.readString();
+		//this.entries = inParcel.readMap(entries);
+		Bundle bundle = new Bundle();
+		bundle = inParcel.readBundle();
+		try{
+		this.entries = (Map<String,String>)bundle.getSerializable("HashMap");
+		}catch(ClassCastException e){
+			e.printStackTrace();
+			throw new RuntimeException();
+		}
+		
+	}
 
 	public Card(String jsonString) throws JSONException{
-		super();
+		super(); 	
 
 		Iterator<?> it;
 		JSONObject json = new JSONObject(jsonString);
@@ -103,5 +124,24 @@ public class Card{
 	}
 	public String getEntry(String key){
 		return entries.get(key);
+	}
+
+	@Override
+	public int describeContents() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel out, int flags) {
+		// TODO Auto-generated method stub
+		out.writeString(firstName);
+		out.writeString(lastName);
+		out.writeString(id);
+		//out.writeMap(entries);
+		out.writeMap(entries);
+		Bundle bundle = new Bundle();
+		bundle.putSerializable("HashMap", (Serializable) entries);
+		out.writeBundle(bundle);
 	}
 }

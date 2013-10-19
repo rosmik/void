@@ -56,10 +56,10 @@
     	android:scaleType="fitStart"
     	android:adjustViewBounds="true"
     	android:visibility="invisible"  />
-    <TextView
+    <!--  <TextView
         android:id="@+id/addedCardAddress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="" />
+        android:text="" /> -->
  	
 </LinearLayout>
