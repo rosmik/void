@@ -1,7 +1,6 @@
 package com.letsbecreative.yoin;
  
-import java.util.HashMap;
-import java.util.List;
+import java.util.Vector;
 
 import android.content.Context;
 import android.graphics.Typeface;
@@ -14,21 +13,16 @@ import android.widget.TextView;
  public class ExpandableListAdapter extends BaseExpandableListAdapter {
  
     private Context _context;
-    private List<String> _listDataHeader; // header titles
-    // child data in format of header title, child title
-    private HashMap<String, List<String>> _listDataChild;
+    private Vector<Card> cardVector;
  
-    public ExpandableListAdapter(Context context, List<String> listDataHeader,
-            HashMap<String, List<String>> listChildData) {
+    public ExpandableListAdapter(Context context, Vector<Card> cardVector) {
         this._context = context;
-        this._listDataHeader = listDataHeader;
-        this._listDataChild = listChildData;
+        this.cardVector = cardVector;
     }
  
     @Override
-    public Object getChild(int groupPosition, int childPosititon) {
-        return this._listDataChild.get(this._listDataHeader.get(groupPosition))
-                .get(childPosititon);
+    public Object getChild(int groupPosition, int childPosition) {
+    	return cardVector.get(groupPosition).getIndexed(childPosition);
     }
  
     @Override
@@ -57,18 +51,17 @@ import android.widget.TextView;
  
     @Override
     public int getChildrenCount(int groupPosition) {
-        return this._listDataChild.get(this._listDataHeader.get(groupPosition))
-                .size();
+    	return cardVector.get(groupPosition).countEntries();
     }
  
     @Override
-    public Object getGroup(int groupPosition) {
-        return this._listDataHeader.get(groupPosition);
+    public Object getGroup(int groupPosition){
+    	return this.cardVector.get(groupPosition).getFirstName() + " " + this.cardVector.get(groupPosition).getLastName(); 
     }
  
     @Override
     public int getGroupCount() {
-        return this._listDataHeader.size();
+        return this.cardVector.size();
     }
  
     @Override
