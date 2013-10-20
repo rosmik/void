@@ -24,6 +24,7 @@ import android.graphics.Bitmap.Config;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Parcel;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -41,20 +42,27 @@ public class TextInput extends Fragment {
 	 * fragment.
 	 */
 	public static final String ARG_SECTION_NUMBER = "section_number";
-	TextView addedAddress;
+	//TextView addedAddress;
+	public ImageView QRView;
+	public TextView name_t;
+	public TextView mail_t;
+	public TextView phone_t;
+	public TextView linkedin_t;
 
 	public TextInput() 
 	{       }
-	public String identityNumber = null;
+	//public String identityNumber = null;
 	public String getAddress = "http://79.136.89.243/get/";
-	public ImageView QRView;
+	
+	public Card personalCard = null;
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		if (savedInstanceState != null){
-			
-			identityNumber = savedInstanceState.getString("id");
-			Log.d("restoring state", identityNumber);
+			Log.d("Yoin","savedInstance is not empty");
+			personalCard = savedInstanceState.getParcelable("card");
+			//identityNumber = savedInstanceState.getString("id");
+			Log.d("restoring personal data", personalCard.toString());
 		}
 		
 		LinearLayout layout = (LinearLayout) inflater.inflate(R.layout.user_input,
@@ -65,29 +73,31 @@ public class TextInput extends Fragment {
 		final EditText mail = (EditText) layout.findViewById(R.id.mail);
 		final EditText phone = (EditText) layout.findViewById(R.id.phone);
 		final EditText linkedin = (EditText) layout.findViewById(R.id.linkedin);
-		addedAddress = (TextView) layout.findViewById(R.id.addedCardAddress);
+		//addedAddress = (TextView) layout.findViewById(R.id.addedCardAddress);
 
 
 		final Button saveButton = (Button) layout.findViewById(R.id.save_button);
 		saveButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				//TODO Handle when you should be able to save (all req. fields filled)
-				Card cardToSend = new Card(firstName.getText().toString(), lastName.getText().toString());
-				cardToSend.addEntry("mail", mail.getText().toString());
-				cardToSend.addEntry("phone", phone.getText().toString());
-				cardToSend.addEntry("linkedin", linkedin.getText().toString());
-				Log.d("JSONData", cardToSend.toString());
-				requestHttpPost("http://79.136.89.243/add",cardToSend.toString());
+				personalCard = new Card(firstName.getText().toString(), lastName.getText().toString());
+				personalCard.addEntry("mail", mail.getText().toString());
+				personalCard.addEntry("phone", phone.getText().toString());
+				personalCard.addEntry("linkedin", linkedin.getText().toString());
+				Log.d("JSONData", personalCard.toString());
+				requestHttpPost("http://79.136.89.243/add", personalCard.toString());
 			}
 		});
 
 		QRView = (ImageView) layout.findViewById(R.id.qr_view);
+		name_t = (TextView) layout.findViewById(R.id.name_t);
+		mail_t = (TextView) layout.findViewById(R.id.mail_t);
+		phone_t = (TextView) layout.findViewById(R.id.phone_t);
+		linkedin_t = (TextView) layout.findViewById(R.id.linkedin_t);
 		
-		if (identityNumber != null){
-			generateQR();
-			QRView.setVisibility(View.VISIBLE);
+		if (personalCard != null){
+			showPersonalCard();
 		}
-		
 
 		return layout;
 	}
@@ -95,10 +105,9 @@ public class TextInput extends Fragment {
 	@Override
 	public void onSaveInstanceState(Bundle savedUserState){
 		super.onSaveInstanceState(savedUserState);
-		
-		savedUserState.putString("id", identityNumber);
-	//	savedUserState.putAll(getArguments());
-		
+		savedUserState.putParcelable("card", personalCard);
+		//savedUserState.putString("id", identityNumber);
+		//savedUserState.putAll(getArguments());
 	}
 	
 
@@ -146,11 +155,10 @@ public class TextInput extends Fragment {
 				if (result != null){
 					Log.d("searchContactResult", result);
 					Toast.makeText(getActivity(), "Saved your data!: " + result, Toast.LENGTH_LONG).show();
-					addedAddress.setText("Get your card at: http://79.136.89.243/get/" + result);
-					identityNumber = result;
-					generateQR();
+					//addedAddress.setText("Get your card at: http://79.136.89.243/get/" + result);
+					personalCard.id = result;
+					showPersonalCard();
 					QRView.setVisibility(View.VISIBLE);
-					
 
 				}else{
 					Log.e("searchContactResult", "Failed saving user-data" );
@@ -159,7 +167,7 @@ public class TextInput extends Fragment {
 				}
 			}
 
-		};
+		};  
 		String[] dataArray;
 		dataArray = new String[2];
 		dataArray[0] = fileUrl;
@@ -167,11 +175,10 @@ public class TextInput extends Fragment {
 		task.execute(dataArray);
 	}
 	private void generateQR(){
-
-
+		
 		int size = 200;// Cubic size of QR code
 		Bitmap bitmapQR = null; // Initialize bitmap, only one is necessary for each user, can be updated
-		String qrInformation = getAddress + identityNumber;
+		String qrInformation = getAddress + personalCard.id;
 		Log.d("qrinformation", qrInformation);
 		com.google.zxing.Writer QRwriter = new QRCodeWriter();// creates a writer object
 		try{
@@ -187,9 +194,20 @@ public class TextInput extends Fragment {
 			generateFail.printStackTrace();
 		}
 		if (bitmapQR != null){
-			
 			QRView.setImageBitmap(bitmapQR);
-
 		}
+	}
+	
+	private void showPersonalCard(){
+		generateQR();
+		QRView.setVisibility(View.VISIBLE);
+		name_t.setText(personalCard.firstName + " " + personalCard.lastName);
+		name_t.setVisibility(View.VISIBLE);
+		mail_t.setText(personalCard.getEntry("mail"));
+		mail_t.setVisibility(View.VISIBLE);
+		phone_t.setText(personalCard.getEntry("phone"));
+		phone_t.setVisibility(View.VISIBLE);
+		linkedin_t.setText(personalCard.getEntry("linkedin"));
+		linkedin_t.setVisibility(View.VISIBLE);
 	}
 }

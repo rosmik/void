@@ -26,4 +26,8 @@
         <item>Export to phone</item>
         <item>Remove</item>
     </string-array>
+    <string name="app_label">Yoin</string>
+    <string name="search_hint">Search cards</string>
+    <string name="title_activity_search">Search</string>
+    <string name="menu_search">Search</string>
 </resources>
