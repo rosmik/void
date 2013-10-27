@@ -2,7 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical">
+    android:background="@drawable/main_background"
+    android:orientation="vertical" 
+    android:paddingTop="?android:attr/actionBarSize">
 
     <android.support.v4.view.ViewPager
         xmlns:android="http://schemas.android.com/apk/res/android"
@@ -16,26 +18,30 @@
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:gravity="center"
         android:orientation="horizontal"
-        android:paddingTop="4dp"
-        android:paddingBottom="16dp">
+        android:paddingBottom="12dp"
+        android:paddingTop="12dp" >
+
+        <!-- android:background="@drawable/navigator_background"> -->
 
         <Button
             android:id="@+id/nav_scanner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@style/button_style"
+            android:drawableTop="@android:drawable/ic_menu_camera"
+            android:enabled="true"
             android:text="@string/nav_scanner" />
 
         <Button
             android:id="@+id/nav_you"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@style/button_style"
+            android:drawableTop="@android:drawable/ic_menu_mylocation"
             android:text="@string/nav_you" />
 
         <Button
             android:id="@+id/nav_contacts"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@style/button_style"
+            android:drawableTop="@android:drawable/ic_menu_my_calendar"
             android:text="@string/nav_contacts" />
     </LinearLayout>
 

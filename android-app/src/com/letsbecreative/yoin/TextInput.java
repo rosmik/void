@@ -176,7 +176,7 @@ public class TextInput extends Fragment {
 	}
 	private void generateQR(){
 		
-		int size = 200;// Cubic size of QR code
+		int size = 400;// Cubic size of QR code
 		Bitmap bitmapQR = null; // Initialize bitmap, only one is necessary for each user, can be updated
 		String qrInformation = getAddress + personalCard.id;
 		Log.d("qrinformation", qrInformation);

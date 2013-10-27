@@ -44,7 +44,7 @@
         android:layout_gravity="right"
         android:onClick="saveInput"
         android:text="@string/send" />
-     <TextView
+    <TextView
         android:id="@+id/name_t"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -67,18 +67,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="" 
-        android:visibility="invisible" />
+        android:visibility="invisible" /> 
     
     <ImageView
         android:id="@+id/qr_view"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:layout_gravity="left"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:src="@drawable/ic_launcher"
-    	android:background="@android:color/white"
+    	android:background="@drawable/drop_shadow"
     	android:contentDescription="@string/qr_code"
     	android:padding="10dp"
-    	android:scaleType="fitStart"
+    	android:scaleType="fitCenter"
     	android:adjustViewBounds="true"
     	android:visibility="invisible"  />
    

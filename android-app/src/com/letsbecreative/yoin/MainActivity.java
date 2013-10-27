@@ -26,6 +26,7 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.content.ComponentName;
+import android.graphics.Color;
 
 public class MainActivity extends FragmentActivity implements
 		ActionBar.TabListener {
@@ -82,7 +83,7 @@ public class MainActivity extends FragmentActivity implements
 		
 		qrReaderTab.setNewCardCallback(new QRFragment.IQRCallback(){
 			public void callback(Card card){
-				qrCallback(card);
+				qrCallback(card	);
 			}
 		});
 		
@@ -107,6 +108,19 @@ public class MainActivity extends FragmentActivity implements
 		mViewPager = (ViewPager) findViewById(R.id.pager);
 		mViewPager.setAdapter(mSectionsPagerAdapter);
 		
+		 // When swiping between different sections, select the corresponding
+        // tab. We can also use ActionBar.Tab#select() to do this if we have
+        // a reference to the Tab.
+        mViewPager
+                        .setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+                                @Override
+                                public void onPageSelected(int position) {
+                                		updateNavColor(position); // Update color of navigator items when swiping to another fragment
+                                }
+                        });
+        
+  
+		
 		// Set the default fragment to show. Showing the middle fragmet 
 		mViewPager.setCurrentItem(YOU);
 		
@@ -116,7 +130,8 @@ public class MainActivity extends FragmentActivity implements
 		navScanButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				// Change to Scanner fragment
-				mViewPager.setCurrentItem(SCANNER);
+				mViewPager.setCurrentItem(SCANNER,true);
+				updateNavColor(SCANNER);
 			}
 		});
 
@@ -125,7 +140,8 @@ public class MainActivity extends FragmentActivity implements
 		navYouButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				// Change to the "You" fragment
-				mViewPager.setCurrentItem(YOU);
+				mViewPager.setCurrentItem(YOU,true);
+				updateNavColor(YOU);
 			}
 		});
 		
@@ -134,15 +150,39 @@ public class MainActivity extends FragmentActivity implements
 		navContactsButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				// Change to Contacts fragment
-				mViewPager.setCurrentItem(CONTACTS);
+				mViewPager.setCurrentItem(CONTACTS,true);
+				updateNavColor(CONTACTS);
 			}
 		});
 		
 	}
 	
-	
+	protected void updateNavColor(int i) {
+			Button navScanButton = (Button) findViewById(R.id.nav_scanner);
+			Button navYouButton = (Button) findViewById(R.id.nav_you);
+			Button navContactsButton = (Button) findViewById(R.id.nav_contacts);
+			
+			switch(i){
+			case SCANNER:
+				navScanButton.setTextColor(Color.RED);
+				navYouButton.setTextColor(Color.WHITE);
+				navContactsButton.setTextColor(Color.WHITE);
+				break;
+			case YOU:
+				navScanButton.setTextColor(Color.WHITE);
+				navYouButton.setTextColor(Color.RED);
+				navContactsButton.setTextColor(Color.WHITE);
+				break;
+			case CONTACTS:
+				navScanButton.setTextColor(Color.WHITE);
+				navYouButton.setTextColor(Color.WHITE);
+				navContactsButton.setTextColor(Color.RED);
+				break;
+			}
+		}
+		
 
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		Log.d("onCreateOptionsMenu", "in optionsmenu");
