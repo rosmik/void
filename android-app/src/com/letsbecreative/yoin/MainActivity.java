@@ -28,12 +28,27 @@ import android.widget.Toast;
 import android.content.ComponentName;
 
 public class MainActivity extends FragmentActivity implements
-		ActionBar.TabListener {
+		ActionBar.TabListener, TextInput.CardListener {
 
 	// Constants used for fragment numbering
 	static final int SCANNER = 0;
 	static final int YOU = 1;
 	static final int CONTACTS = 2;
+	
+	// Variables from TextInput
+	public String getAddress = "http://79.136.89.243/get/";
+	public Card personalCard = null;
+	
+	@Override
+	public Card getPersonalCard() {
+		return personalCard;
+	}
+
+	@Override
+	public void setPersonalCard(Card personalCard) {
+		this.personalCard = personalCard;
+	}
+
 	/**
 	 * The {@link android.support.v4.view.PagerAdapter} that will provide
 	 * fragments for each of the sections. We use a
@@ -257,6 +272,5 @@ public class MainActivity extends FragmentActivity implements
 			return rootView;
 		}
 	}
-
 
 }

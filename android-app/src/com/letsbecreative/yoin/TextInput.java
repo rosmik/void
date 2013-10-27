@@ -19,6 +19,7 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -57,18 +58,40 @@ public class TextInput extends Fragment {
 
 	public TextInput() 
 	{       }
-	//public String identityNumber = null;
-	public String getAddress = "http://79.136.89.243/get/";
+	CardListener personalCardListener;
 	
-	public Card personalCard = null;
+	//OnPersonalCardListener mPersonalCard
+	
+	 // Container Activity must implement this interface
+    public interface CardListener {
+        public Card getPersonalCard();
+        public void setPersonalCard(Card personalCard);
+        //public void requestHttpPost(String fileUrl, String jsonString);
+    }
+	
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        
+        // This makes sure that the container activity has implemented
+        // the callback interface. If not, it throws an exception
+        try {
+            personalCardListener = (CardListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement CardListener");
+        }
+    }
+    
+    
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		if (savedInstanceState != null){
 			Log.d("Yoin","savedInstance is not empty");
-			personalCard = savedInstanceState.getParcelable("card");
+			personalCardListener.setPersonalCard((Card)savedInstanceState.getParcelable("card"));
 			//identityNumber = savedInstanceState.getString("id");
-			Log.d("restoring personal data", personalCard.toString());
+			Log.d("restoring personal data", personalCardListener.getPersonalCard().toString());
 		}
 		
 		LinearLayout layout = (LinearLayout) inflater.inflate(R.layout.user_input,
@@ -91,7 +114,7 @@ public class TextInput extends Fragment {
 		phone_t = (TextView) layout.findViewById(R.id.phone_t);
 		linkedin_t = (TextView) layout.findViewById(R.id.linkedin_t);
 		
-		if (personalCard != null){
+		if (personalCardListener.getPersonalCard() != null){
 			showPersonalCard();
 		}
 
@@ -101,7 +124,7 @@ public class TextInput extends Fragment {
 	@Override
 	public void onSaveInstanceState(Bundle savedUserState){
 		super.onSaveInstanceState(savedUserState);
-		savedUserState.putParcelable("card", personalCard);
+		savedUserState.putParcelable("card", ((MainActivity)getActivity()).personalCard);
 		//savedUserState.putString("id", identityNumber);
 		//savedUserState.putAll(getArguments());
 	}
@@ -152,6 +175,7 @@ public class TextInput extends Fragment {
 					Log.d("searchContactResult", result);
 					Toast.makeText(getActivity(), "Saved your data!: " + result, Toast.LENGTH_LONG).show();
 					//addedAddress.setText("Get your card at: http://79.136.89.243/get/" + result);
+					Card personalCard = personalCardListener.getPersonalCard();
 					personalCard.id = result;
 					showPersonalCard();
 					QRView.setVisibility(View.VISIBLE);
@@ -176,7 +200,7 @@ public class TextInput extends Fragment {
 		
 		int size = 200;// Cubic size of QR code
 		Bitmap bitmapQR = null; // Initialize bitmap, only one is necessary for each user, can be updated
-		String qrInformation = getAddress + personalCard.id;
+		String qrInformation = "http://79.136.89.243/get/" + personalCardListener.getPersonalCard().id;
 		Log.d("qrinformation", qrInformation);
 		com.google.zxing.Writer QRwriter = new QRCodeWriter();// creates a writer object
 		try{
@@ -210,12 +234,12 @@ public class TextInput extends Fragment {
 		final EditText mail = (EditText) view.findViewById(R.id.mail);
 		final EditText phone = (EditText) view.findViewById(R.id.phone);
 		final EditText linkedin = (EditText) view.findViewById(R.id.linkedin);
-		if (personalCard != null){
-			firstName.setText(personalCard.firstName);
-			lastName.setText(personalCard.lastName);
-			mail.setText(personalCard.getEntry("mail"));
-			phone.setText(personalCard.getEntry("phone"));
-			linkedin.setText(personalCard.getEntry("linkedin"));
+		if (personalCardListener.getPersonalCard() != null){
+			firstName.setText(personalCardListener.getPersonalCard().firstName);
+			lastName.setText(personalCardListener.getPersonalCard().lastName);
+			mail.setText(personalCardListener.getPersonalCard().getEntry("mail"));
+			phone.setText(personalCardListener.getPersonalCard().getEntry("phone"));
+			linkedin.setText(personalCardListener.getPersonalCard().getEntry("linkedin"));
 	
 		};
 		
@@ -234,12 +258,14 @@ public class TextInput extends Fragment {
 								
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						personalCard = new Card(firstName.getText().toString(), lastName.getText().toString());
-						personalCard.addEntry("mail", mail.getText().toString());
-						personalCard.addEntry("phone", phone.getText().toString());
-						personalCard.addEntry("linkedin", linkedin.getText().toString());
-						Log.d("JSONData", personalCard.toString());
-						requestHttpPost("http://79.136.89.243/add", personalCard.toString());
+					Card pCard = new Card(firstName.getText().toString(), lastName.getText().toString());
+						pCard.addEntry("mail", mail.getText().toString());
+						pCard.addEntry("phone", phone.getText().toString());
+						pCard.addEntry("linkedin", linkedin.getText().toString());
+						personalCardListener.setPersonalCard(pCard);
+						
+						Log.d("JSONData", personalCardListener.getPersonalCard().toString());
+						requestHttpPost("http://79.136.89.243/add", personalCardListener.getPersonalCard().toString());
 						dialog.dismiss();
 						
 					}
@@ -250,13 +276,13 @@ public class TextInput extends Fragment {
 	private void showPersonalCard(){
 		generateQR();
 		QRView.setVisibility(View.VISIBLE);
-		name_t.setText(personalCard.firstName + " " + personalCard.lastName);
+		name_t.setText(personalCardListener.getPersonalCard().firstName + " " + personalCardListener.getPersonalCard().lastName);
 		name_t.setVisibility(View.VISIBLE);
-		mail_t.setText(personalCard.getEntry("mail"));
+		mail_t.setText(personalCardListener.getPersonalCard().getEntry("mail"));
 		mail_t.setVisibility(View.VISIBLE);
-		phone_t.setText(personalCard.getEntry("phone"));
+		phone_t.setText(personalCardListener.getPersonalCard().getEntry("phone"));
 		phone_t.setVisibility(View.VISIBLE);
-		linkedin_t.setText(personalCard.getEntry("linkedin"));
+		linkedin_t.setText(personalCardListener.getPersonalCard().getEntry("linkedin"));
 		linkedin_t.setVisibility(View.VISIBLE);
 	}
 }
