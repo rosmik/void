@@ -96,7 +96,7 @@ public class MainActivity extends FragmentActivity implements
 		// Set up the action bar.
 		final ActionBar actionBar = getActionBar();
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD); // NAVIGATION_MODE_STANDARD hides the tabs
-		
+		actionBar.setDisplayShowTitleEnabled(false);
 		
 		
 		// Create the adapter that will return a fragment for each of the three
@@ -164,19 +164,28 @@ public class MainActivity extends FragmentActivity implements
 			
 			switch(i){
 			case SCANNER:
-				navScanButton.setTextColor(Color.RED);
+				navScanButton.setCompoundDrawablesWithIntrinsicBounds(0,R.drawable.ic_nav_on,0,0);
+				navYouButton.setCompoundDrawablesWithIntrinsicBounds(0,R.drawable.ic_nav_off,0,0);
+				navContactsButton.setCompoundDrawablesWithIntrinsicBounds(0,R.drawable.ic_nav_off,0,0);
+				navScanButton.setTextColor(Color.BLUE);
 				navYouButton.setTextColor(Color.WHITE);
 				navContactsButton.setTextColor(Color.WHITE);
 				break;
 			case YOU:
+				navScanButton.setCompoundDrawablesWithIntrinsicBounds(0,R.drawable.ic_nav_off,0,0);
+				navYouButton.setCompoundDrawablesWithIntrinsicBounds(0,R.drawable.ic_nav_on,0,0);
+				navContactsButton.setCompoundDrawablesWithIntrinsicBounds(0,R.drawable.ic_nav_off,0,0);
 				navScanButton.setTextColor(Color.WHITE);
-				navYouButton.setTextColor(Color.RED);
+				navYouButton.setTextColor(Color.BLUE);
 				navContactsButton.setTextColor(Color.WHITE);
 				break;
 			case CONTACTS:
+				navScanButton.setCompoundDrawablesWithIntrinsicBounds(0,R.drawable.ic_nav_off,0,0);
+				navYouButton.setCompoundDrawablesWithIntrinsicBounds(0,R.drawable.ic_nav_off,0,0);
+				navContactsButton.setCompoundDrawablesWithIntrinsicBounds(0,R.drawable.ic_nav_on,0,0);
 				navScanButton.setTextColor(Color.WHITE);
 				navYouButton.setTextColor(Color.WHITE);
-				navContactsButton.setTextColor(Color.RED);
+				navContactsButton.setTextColor(Color.BLUE);
 				break;
 			}
 		}

@@ -47,14 +47,15 @@ public class TextInput extends Fragment {
 	 */
 	public static final String ARG_SECTION_NUMBER = "section_number";
 	//TextView addedAddress;
-	public ImageView QRView;
-	public TextView firstName_t;
-	public TextView lastName_t;
-	public TextView name_t;
-	public TextView mail_t;
-	public TextView phone_t;
-	public TextView linkedin_t;
-
+	private ImageView QRView;
+	private TextView firstName_t;
+	private TextView lastName_t;
+	private TextView name_t;
+	private TextView mail_t;
+	private TextView phone_t;
+	private TextView linkedin_t;
+	private LinearLayout personal_card;
+	
 	public TextInput() 
 	{       }
 	//public String identityNumber = null;
@@ -90,6 +91,7 @@ public class TextInput extends Fragment {
 		mail_t = (TextView) layout.findViewById(R.id.mail_t);
 		phone_t = (TextView) layout.findViewById(R.id.phone_t);
 		linkedin_t = (TextView) layout.findViewById(R.id.linkedin_t);
+		personal_card = (LinearLayout)layout.findViewById(R.id.personal_card);
 		
 		if (personalCard != null){
 			showPersonalCard();
@@ -249,14 +251,15 @@ public class TextInput extends Fragment {
 	
 	private void showPersonalCard(){
 		generateQR();
+		personal_card.setVisibility(View.VISIBLE);
 		QRView.setVisibility(View.VISIBLE);
 		name_t.setText(personalCard.firstName + " " + personalCard.lastName);
-		name_t.setVisibility(View.VISIBLE);
+//		name_t.setVisibility(View.VISIBLE);
 		mail_t.setText(personalCard.getEntry("mail"));
-		mail_t.setVisibility(View.VISIBLE);
+//		mail_t.setVisibility(View.VISIBLE);
 		phone_t.setText(personalCard.getEntry("phone"));
-		phone_t.setVisibility(View.VISIBLE);
+//		phone_t.setVisibility(View.VISIBLE);
 		linkedin_t.setText(personalCard.getEntry("linkedin"));
-		linkedin_t.setVisibility(View.VISIBLE);
+//		linkedin_t.setVisibility(View.VISIBLE);
 	}
 }

@@ -28,20 +28,20 @@
         <Button
             android:id="@+id/nav_scanner"
             style="@style/button_style"
-            android:drawableTop="@android:drawable/ic_menu_camera"
+            android:drawableTop="@drawable/ic_nav_off"
             android:enabled="true"
             android:text="@string/nav_scanner" />
 
         <Button
             android:id="@+id/nav_you"
             style="@style/button_style"
-            android:drawableTop="@android:drawable/ic_menu_mylocation"
+            android:drawableTop="@drawable/ic_nav_on"
             android:text="@string/nav_you" />
 
         <Button
             android:id="@+id/nav_contacts"
             style="@style/button_style"
-            android:drawableTop="@android:drawable/ic_menu_my_calendar"
+            android:drawableTop="@drawable/ic_nav_off"
             android:text="@string/nav_contacts" />
     </LinearLayout>
 
