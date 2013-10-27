@@ -41,7 +41,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-public class TextInput extends Fragment {
+public class PersonalTab extends Fragment {
 	/**
 	 * The fragment argument representing the section number for this
 	 * fragment.
@@ -56,7 +56,7 @@ public class TextInput extends Fragment {
 	public TextView phone_t;
 	public TextView linkedin_t;
 
-	public TextInput() 
+	public PersonalTab() 
 	{       }
 	CardListener personalCardListener;
 	
@@ -66,7 +66,8 @@ public class TextInput extends Fragment {
     public interface CardListener {
         public Card getPersonalCard();
         public void setPersonalCard(Card personalCard);
-        //public void requestHttpPost(String fileUrl, String jsonString);
+        public void requestHttpPost(String jsonString);
+        public Bitmap getQRCode();
     }
 	
     @Override
@@ -130,70 +131,7 @@ public class TextInput extends Fragment {
 	}
 	
 
-	public void requestHttpPost(String fileUrl, String jsonString){
-
-		AsyncTask<String, Object, String> task = new AsyncTask<String, Object, String>() {
-
-			@Override
-			protected String doInBackground(String... uri) {
-				HttpResponse response;
-				HttpClient httpclient = new DefaultHttpClient();
-				HttpPost httpPost = new HttpPost(uri[0]);
-				String responseString = null;
-				//httpPost.setHeader("Accept", "application/json");
-				httpPost.setHeader("Content-type", "application/json;charset=utf-8");
-
-
-				try {
-					httpPost.setEntity(new StringEntity(uri[1], HTTP.UTF_8));
-					Log.d("json",uri[1]);
-					Log.d("Header",httpPost.getFirstHeader("Content-type").toString());
-					Log.d("requestHttp", "Trying to send http Post");
-					response = httpclient.execute(httpPost);
-					Log.d("requestHttp", "sent a http Post");
-					StatusLine statusLine = response.getStatusLine();
-					if(statusLine.getStatusCode() == HttpStatus.SC_OK){
-						ByteArrayOutputStream out = new ByteArrayOutputStream();
-						response.getEntity().writeTo(out);
-						out.close();
-						responseString = out.toString();
-					} else{
-						//Closes the connection.
-						response.getEntity().getContent().close();
-						throw new IOException(statusLine.getReasonPhrase());
-					}
-				} catch (ClientProtocolException e) {
-					//TODO Handle problems..
-				} catch (IOException e) {
-					//TODO Handle problems..s
-				}
-				return responseString;
-			}
-			@Override
-			protected void onPostExecute(String result){
-				if (result != null){
-					Log.d("searchContactResult", result);
-					Toast.makeText(getActivity(), "Saved your data!: " + result, Toast.LENGTH_LONG).show();
-					//addedAddress.setText("Get your card at: http://79.136.89.243/get/" + result);
-					Card personalCard = personalCardListener.getPersonalCard();
-					personalCard.id = result;
-					showPersonalCard();
-					QRView.setVisibility(View.VISIBLE);
-
-				}else{
-					Log.e("searchContactResult", "Failed saving user-data" );
-					Toast contactToast= Toast.makeText(getActivity(), "Failed to save your data", Toast.LENGTH_SHORT);
-					contactToast.show();
-				}
-			}
-
-		};  
-		String[] dataArray;
-		dataArray = new String[2];
-		dataArray[0] = fileUrl;
-		dataArray[1] = jsonString;
-		task.execute(dataArray);
-	}
+	
 	
 	
 	private void generateQR(){
@@ -263,9 +201,9 @@ public class TextInput extends Fragment {
 						pCard.addEntry("phone", phone.getText().toString());
 						pCard.addEntry("linkedin", linkedin.getText().toString());
 						personalCardListener.setPersonalCard(pCard);
-						
-						Log.d("JSONData", personalCardListener.getPersonalCard().toString());
-						requestHttpPost("http://79.136.89.243/add", personalCardListener.getPersonalCard().toString());
+						personalCardListener.requestHttpPost(pCard.toString());
+						//Log.d("JSONData", personalCardListener.getPersonalCard().toString());
+
 						dialog.dismiss();
 						
 					}
@@ -273,7 +211,7 @@ public class TextInput extends Fragment {
 		return updateDialogBuilder.create();
 	}
 	
-	private void showPersonalCard(){
+	public void showPersonalCard(){
 		generateQR();
 		QRView.setVisibility(View.VISIBLE);
 		name_t.setText(personalCardListener.getPersonalCard().firstName + " " + personalCardListener.getPersonalCard().lastName);
@@ -284,5 +222,6 @@ public class TextInput extends Fragment {
 		phone_t.setVisibility(View.VISIBLE);
 		linkedin_t.setText(personalCardListener.getPersonalCard().getEntry("linkedin"));
 		linkedin_t.setVisibility(View.VISIBLE);
+		QRView.setVisibility(View.VISIBLE);
 	}
 }
