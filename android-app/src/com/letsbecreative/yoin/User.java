@@ -5,7 +5,15 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import android.content.ContentProviderOperation;
+import android.content.ContentProviderResult;
 import android.os.Bundle;
+import android.provider.ContactsContract;
+import android.provider.ContactsContract.CommonDataKinds.Email;
+import android.provider.ContactsContract.CommonDataKinds.Phone;
+import android.provider.ContactsContract.CommonDataKinds.StructuredName;
+import android.provider.ContactsContract.Data;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -89,6 +97,48 @@ public class User extends Fragment {
             }
           }
         }
+        
+        public void saveInput(){
+        	
+        }
+        
+       public void addContact(Card c){
+        	ArrayList<ContentProviderOperation> op_list = new ArrayList<ContentProviderOperation>(); 
+            op_list.add(ContentProviderOperation.newInsert(ContactsContract.RawContacts.CONTENT_URI) 
+                .withValue(ContactsContract.RawContacts.ACCOUNT_TYPE, null) 
+                .withValue(ContactsContract.RawContacts.ACCOUNT_NAME, null) 
+                //.withValue(RawContacts.AGGREGATION_MODE, RawContacts.AGGREGATION_MODE_DEFAULT) 
+                .build()); 
+
+         // first and last names 
+              op_list.add(ContentProviderOperation.newInsert(Data.CONTENT_URI) 
+          .withValueBackReference(Data.RAW_CONTACT_ID, 0) 
+                .withValue(Data.MIMETYPE, StructuredName.CONTENT_ITEM_TYPE) 
+                .withValue(StructuredName.GIVEN_NAME, c.firstName) 
+                .withValue(StructuredName.FAMILY_NAME, c.lastName) 
+                .build()); 
+
+//              op_list.add(ContentProviderOperation.newInsert(Data.CONTENT_URI) 
+//                      .withValueBackReference(Data.RAW_CONTACT_ID, 0) 
+//                      .withValue(ContactsContract.Data.MIMETYPE,ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE)
+//                      .withValue(ContactsContract.CommonDataKinds.Phone.NUMBER, c.getEntry("phone"))
+//                      .withValue(ContactsContract.CommonDataKinds.Phone.TYPE, Phone.TYPE_CUSTOM)
+//                      .build());
+//              op_list.add(ContentProviderOperation.newInsert(Data.CONTENT_URI) 
+//                      .withValueBackReference(Data.RAW_CONTACT_ID, 0)
+//
+//              .withValue(ContactsContract.Data.MIMETYPE,ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE)
+//              .withValue(ContactsContract.CommonDataKinds.Email.DATA, c.getEntry("email"))
+//              .withValue(ContactsContract.CommonDataKinds.Email.TYPE, Email.TYPE_CUSTOM)
+//              .build());
+
+         try{ 
+          ContentProviderResult[] results = getActivity().getContentResolver().applyBatch(ContactsContract.AUTHORITY, op_list); 
+         }catch(Exception e){ 
+          e.printStackTrace(); 
+         } 
+        }
+        
         @Override
         public boolean onContextItemSelected(MenuItem item) {
             ExpandableListView.ExpandableListContextMenuInfo info = (ExpandableListView.ExpandableListContextMenuInfo)item.getMenuInfo();
@@ -96,7 +146,7 @@ public class User extends Fragment {
             switch (item.getItemId()) {
             case 0:
             	// TODO Export contact to phone
-            	Log.d("User", "0 pressed");
+            	addContact((Card)listAdapter.getCard((int)info.id));
             	return true;
             case 1:
             	// TODO Remove contact from cardset 

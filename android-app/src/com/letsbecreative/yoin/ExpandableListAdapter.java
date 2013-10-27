@@ -59,6 +59,10 @@ import android.widget.TextView;
     	return this.cardVector.get(groupPosition).getFirstName() + " " + this.cardVector.get(groupPosition).getLastName(); 
     }
  
+    public Object getCard(int groupPosition){
+    	return this.cardVector.get(groupPosition); 
+    }
+    
     @Override
     public int getGroupCount() {
         return this.cardVector.size();

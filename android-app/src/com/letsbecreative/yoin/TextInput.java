@@ -76,7 +76,7 @@ public class TextInput extends Fragment {
 		//addedAddress = (TextView) layout.findViewById(R.id.addedCardAddress);
 
 
-		final Button saveButton = (Button) layout.findViewById(R.id.save_button);
+		/*final Button saveButton = (Button) layout.findViewById(R.id.save_button);
 		saveButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				//TODO Handle when you should be able to save (all req. fields filled)
@@ -87,7 +87,7 @@ public class TextInput extends Fragment {
 				Log.d("JSONData", personalCard.toString());
 				requestHttpPost("http://79.136.89.243/add", personalCard.toString());
 			}
-		});
+		});*/
 
 		QRView = (ImageView) layout.findViewById(R.id.qr_view);
 		name_t = (TextView) layout.findViewById(R.id.name_t);

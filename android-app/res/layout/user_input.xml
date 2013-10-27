@@ -37,13 +37,6 @@
         android:hint="@string/linkedin"
         android:inputType="textUri" />
 
-    <Button
-        android:id="@+id/save_button"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="right"
-        android:onClick="saveInput"
-        android:text="@string/send" />
      <TextView
         android:id="@+id/name_t"
         android:layout_width="wrap_content"
