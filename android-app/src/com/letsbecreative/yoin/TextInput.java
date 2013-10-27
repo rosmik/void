@@ -19,6 +19,10 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.Color;
@@ -44,6 +48,8 @@ public class TextInput extends Fragment {
 	public static final String ARG_SECTION_NUMBER = "section_number";
 	//TextView addedAddress;
 	public ImageView QRView;
+	public TextView firstName_t;
+	public TextView lastName_t;
 	public TextView name_t;
 	public TextView mail_t;
 	public TextView phone_t;
@@ -68,24 +74,14 @@ public class TextInput extends Fragment {
 		LinearLayout layout = (LinearLayout) inflater.inflate(R.layout.user_input,
 				container, false);
 
-		final EditText firstName = (EditText) layout.findViewById(R.id.first_name);
-		final EditText lastName = (EditText) layout.findViewById(R.id.last_name);
-		final EditText mail = (EditText) layout.findViewById(R.id.mail);
-		final EditText phone = (EditText) layout.findViewById(R.id.phone);
-		final EditText linkedin = (EditText) layout.findViewById(R.id.linkedin);
 		//addedAddress = (TextView) layout.findViewById(R.id.addedCardAddress);
 
-
-		final Button saveButton = (Button) layout.findViewById(R.id.save_button);
+		final Button saveButton = (Button) layout.findViewById(R.id.update_user_button);
 		saveButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				//TODO Handle when you should be able to save (all req. fields filled)
-				personalCard = new Card(firstName.getText().toString(), lastName.getText().toString());
-				personalCard.addEntry("mail", mail.getText().toString());
-				personalCard.addEntry("phone", phone.getText().toString());
-				personalCard.addEntry("linkedin", linkedin.getText().toString());
-				Log.d("JSONData", personalCard.toString());
-				requestHttpPost("http://79.136.89.243/add", personalCard.toString());
+				Dialog updateDialog = createUpdateDialog();
+				updateDialog.show();
+
 			}
 		});
 
@@ -174,6 +170,8 @@ public class TextInput extends Fragment {
 		dataArray[1] = jsonString;
 		task.execute(dataArray);
 	}
+	
+	
 	private void generateQR(){
 		
 		int size = 200;// Cubic size of QR code
@@ -196,6 +194,57 @@ public class TextInput extends Fragment {
 		if (bitmapQR != null){
 			QRView.setImageBitmap(bitmapQR);
 		}
+	}
+	
+	public Dialog createUpdateDialog(){
+		
+		LayoutInflater inflater = getActivity().getLayoutInflater();
+		View view = inflater.inflate(R.layout.update_personal_data, null);
+		
+		AlertDialog.Builder updateDialogBuilder = new AlertDialog.Builder(getActivity());
+		
+		updateDialogBuilder
+		.setView(view);
+		final EditText firstName = (EditText) view.findViewById(R.id.first_name);
+		final EditText lastName = (EditText) view.findViewById(R.id.last_name);
+		final EditText mail = (EditText) view.findViewById(R.id.mail);
+		final EditText phone = (EditText) view.findViewById(R.id.phone);
+		final EditText linkedin = (EditText) view.findViewById(R.id.linkedin);
+		if (personalCard != null){
+			firstName.setText(personalCard.firstName);
+			lastName.setText(personalCard.lastName);
+			mail.setText(personalCard.getEntry("mail"));
+			phone.setText(personalCard.getEntry("phone"));
+			linkedin.setText(personalCard.getEntry("linkedin"));
+	
+		};
+		
+		updateDialogBuilder
+		.setNegativeButton("Cancel", 
+				new DialogInterface.OnClickListener() {
+								
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.cancel();
+						
+					}
+				})
+		.setPositiveButton("Update", 
+				new DialogInterface.OnClickListener() {
+								
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						personalCard = new Card(firstName.getText().toString(), lastName.getText().toString());
+						personalCard.addEntry("mail", mail.getText().toString());
+						personalCard.addEntry("phone", phone.getText().toString());
+						personalCard.addEntry("linkedin", linkedin.getText().toString());
+						Log.d("JSONData", personalCard.toString());
+						requestHttpPost("http://79.136.89.243/add", personalCard.toString());
+						dialog.dismiss();
+						
+					}
+				});
+		return updateDialogBuilder.create();
 	}
 	
 	private void showPersonalCard(){

@@ -5,40 +5,10 @@
     android:paddingLeft="16dp"
     android:paddingRight="16dp"
     android:orientation="vertical" >
-    <EditText
-        android:id="@+id/first_name"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/first_name"/>
-    <EditText
-        android:id="@+id/last_name"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/last_name" />
-
-    <EditText
-        android:id="@+id/mail"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/mail"
-        android:inputType="textEmailAddress" />
-
-    <EditText
-        android:id="@+id/phone"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/number"
-        android:inputType="phone" />
-
-    <EditText
-        android:id="@+id/linkedin"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/linkedin"
-        android:inputType="textUri" />
+    
 
     <Button
-        android:id="@+id/save_button"
+        android:id="@+id/update_user_button"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:layout_gravity="right"
