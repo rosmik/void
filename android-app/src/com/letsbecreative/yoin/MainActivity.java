@@ -1,14 +1,32 @@
 package com.letsbecreative.yoin;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 import java.util.Vector;
 import java.util.Collections;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.StatusLine;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.protocol.HTTP;
+
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
+
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
 import android.app.SearchManager;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -26,15 +44,34 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.content.ComponentName;
+
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Bitmap.Config;
 
 public class MainActivity extends FragmentActivity implements
-		ActionBar.TabListener {
+ActionBar.TabListener, PersonalTab.CardListener {
 
 	// Constants used for fragment numbering
 	static final int SCANNER = 0;
 	static final int YOU = 1;
 	static final int CONTACTS = 2;
+
+	// Variables from TextInput
+	public String getAddress = "http://79.136.89.243/get/";
+	public String postAddress = "http://79.136.89.243/add";
+	public Card personalCard = null;
+
+	@Override
+	public Card getPersonalCard() {
+		return personalCard;
+	}
+
+	@Override
+	public void setPersonalCard(Card personalCard) {
+		this.personalCard = personalCard;
+	}
+
 	/**
 	 * The {@link android.support.v4.view.PagerAdapter} that will provide
 	 * fragments for each of the sections. We use a
@@ -49,14 +86,14 @@ public class MainActivity extends FragmentActivity implements
 	 * The {@link ViewPager} that will host the section contents.
 	 */
 	ViewPager mViewPager;
-	
+
 	/**
 	 *  The tabfragments
 	 */
-	Fragment fragmentTab1 = new TextInput();
+	PersonalTab personalTab = new PersonalTab();
 	User cardListTab = new User();
 	QRFragment qrReaderTab = new QRFragment();
-	
+
 	DatabaseHandler databaseHandler;
 	Vector<Card> cardVector = new Vector<Card>();
 
@@ -69,36 +106,35 @@ public class MainActivity extends FragmentActivity implements
 			}
 		});
 	}
-	
+
 	public void addCard(Card card){
 		this.cardVector.add(card);
 		Collections.sort((List<Card>)cardVector);
 		cardListTab.listAdapter.notifyDataSetChanged();
 		this.databaseHandler.addContact(card);
-    }
-	
+	}
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		qrReaderTab.setNewCardCallback(new QRFragment.IQRCallback(){
 			public void callback(Card card){
 				qrCallback(card	);
 			}
 		});
-		
+
 		databaseHandler = new DatabaseHandler(getBaseContext(), "yoinDatabase", null , 1);
-		
+
 		databaseHandler.getContacts(cardVector);
-		
+
 		setContentView(R.layout.activity_main);
 
 		// Set up the action bar.
 		final ActionBar actionBar = getActionBar();
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD); // NAVIGATION_MODE_STANDARD hides the tabs
 		actionBar.setDisplayShowTitleEnabled(false);
-		
-		
+
 		// Create the adapter that will return a fragment for each of the three
 		// primary sections of the app.
 		mSectionsPagerAdapter = new SectionsPagerAdapter(
@@ -120,10 +156,9 @@ public class MainActivity extends FragmentActivity implements
                         });
         
   
-		
 		// Set the default fragment to show. Showing the middle fragmet 
 		mViewPager.setCurrentItem(YOU);
-		
+
 		// Set up the navigation buttons in the bottom
 		// Scanner-button
 		final Button navScanButton = (Button) findViewById(R.id.nav_scanner);
@@ -144,7 +179,7 @@ public class MainActivity extends FragmentActivity implements
 				updateNavColor(YOU);
 			}
 		});
-		
+
 		// Contacts-button
 		final Button navContactsButton = (Button) findViewById(R.id.nav_contacts);
 		navContactsButton.setOnClickListener(new View.OnClickListener() {
@@ -154,7 +189,7 @@ public class MainActivity extends FragmentActivity implements
 				updateNavColor(CONTACTS);
 			}
 		});
-		
+
 	}
 	
 	protected void updateNavColor(int i) {
@@ -189,30 +224,28 @@ public class MainActivity extends FragmentActivity implements
 				break;
 			}
 		}
-		
-
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		Log.d("onCreateOptionsMenu", "in optionsmenu");
-	
-		// Inflate the options menu from XML
-	    MenuInflater inflater = getMenuInflater();
-	    inflater.inflate(R.menu.search, menu);
 
-	    // Get the SearchView and set the searchable configuration
-	    SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-	    if(searchManager == null) {
-	    	throw(new RuntimeException());
-	    }
-	    SearchView searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
-	    if(searchView == null) {
-	    	throw(new RuntimeException());
-	    }
-	    // Assumes current activity is the searchable activity
-	    searchView.setSearchableInfo(searchManager.getSearchableInfo(new ComponentName("com.letsbecreative.yoin", "com.letsbecreative.yoin.SearchActivity")));
-	    searchView.setIconifiedByDefault(true); 
-		
+		// Inflate the options menu from XML
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.search, menu);
+
+		// Get the SearchView and set the searchable configuration
+		SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+		if(searchManager == null) {
+			throw(new RuntimeException());
+		}
+		SearchView searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
+		if(searchView == null) {
+			throw(new RuntimeException());
+		}
+		// Assumes current activity is the searchable activity
+		searchView.setSearchableInfo(searchManager.getSearchableInfo(new ComponentName("com.letsbecreative.yoin", "com.letsbecreative.yoin.SearchActivity")));
+		searchView.setIconifiedByDefault(true); 
+
 		return true;
 	}
 
@@ -252,7 +285,7 @@ public class MainActivity extends FragmentActivity implements
 			case SCANNER:
 				return qrReaderTab;
 			case YOU:
-				return fragmentTab1;
+				return personalTab;
 			case CONTACTS:
 				return cardListTab;
 			}
@@ -307,5 +340,101 @@ public class MainActivity extends FragmentActivity implements
 		}
 	}
 
+	@Override
+	public void requestHttpPost(String jsonString) {
+
+		AsyncTask<String, Object, String> task = new AsyncTask<String, Object, String>() {
+
+			@Override
+			protected String doInBackground(String... uri) {
+				HttpResponse response;
+				HttpClient httpclient = new DefaultHttpClient();
+				HttpPost httpPost = new HttpPost(uri[0]);
+				String responseString = null;
+				//httpPost.setHeader("Accept", "application/json");
+				httpPost.setHeader("Content-type", "application/json;charset=utf-8");
+
+
+				try {
+					httpPost.setEntity(new StringEntity(uri[1], HTTP.UTF_8));
+					Log.d("json",uri[1]);
+					Log.d("Header",httpPost.getFirstHeader("Content-type").toString());
+					Log.d("requestHttp", "Trying to send http Post");
+					response = httpclient.execute(httpPost);
+					Log.d("requestHttp", "sent a http Post");
+					StatusLine statusLine = response.getStatusLine();
+					if(statusLine.getStatusCode() == HttpStatus.SC_OK){
+						ByteArrayOutputStream out = new ByteArrayOutputStream();
+						response.getEntity().writeTo(out);
+						out.close();
+						responseString = out.toString();
+					} else{
+						//Closes the connection.
+						response.getEntity().getContent().close();
+						throw new IOException(statusLine.getReasonPhrase());
+					}
+				} catch (ClientProtocolException e) {
+					//TODO Handle problems..
+				} catch (IOException e) {
+					//TODO Handle problems..s
+				}
+				return responseString;
+			}
+			@Override
+			protected void onPostExecute(String result){
+				if (result != null){
+					Log.d("searchContactResult", result);
+					//addedAddress.setText("Get your card at: http://79.136.89.243/get/" + result);
+					//Card personalCard = personalCardListener.getPersonalCard();
+					personalCard.id = result;
+					showPersonalCard();
+					Toast.makeText(getApplicationContext(), "Saved your data " + personalCard.firstName + "!", Toast.LENGTH_LONG).show();
+
+				}else{
+					Log.e("searchContactResult", "Failed saving user-data" );
+					Toast contactToast= Toast.makeText(getApplicationContext(), "Failed to save your data", Toast.LENGTH_SHORT);
+					contactToast.show();
+				}
+			}
+
+		};  
+		String[] dataArray;
+		dataArray = new String[2];
+		dataArray[0] = postAddress;
+		dataArray[1] = jsonString;
+		task.execute(dataArray);
+
+	}
+
+	private void showPersonalCard(){
+		this.runOnUiThread(new Runnable(){
+			public void run(){		
+				personalTab.showPersonalCard();
+				
+			}
+		});
+	}
+
+	@Override
+	public Bitmap getQRCode() {
+			int size = 200;// Cubic size of QR code
+			Bitmap bitmapQR = null; // Initialize bitmap, only one is necessary for each user, can be updated
+			String qrInformation = getAddress + personalCard.id;
+			Log.d("MainActivity", qrInformation);
+			com.google.zxing.Writer QRwriter = new QRCodeWriter();// creates a writer object
+			try{
+				BitMatrix matrix = QRwriter.encode(qrInformation, BarcodeFormat.QR_CODE,size, size); // creates a matrix from the given string to specified format
+				bitmapQR = Bitmap.createBitmap(size, size, Config.ARGB_4444); // Setup for bitmap, each pixel is stored in one byte.hic
+				for (int i = 0; i < size; i++){
+					for (int j = 0; j < size; j++){
+						bitmapQR.setPixel(i, j, matrix.get(i, j) ? Color.BLACK: Color.WHITE);// loops through bitmap and matrix to create the bitmap graphics
+					}
+				}
+			}
+			catch (WriterException generateFail) {
+				generateFail.printStackTrace();
+			}
+			return bitmapQR;
+		}
 
 }
