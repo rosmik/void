@@ -130,34 +130,6 @@ public class PersonalTab extends Fragment {
 		//savedUserState.putAll(getArguments());
 	}
 	
-
-	
-	
-	
-	private void generateQR(){
-		
-		int size = 200;// Cubic size of QR code
-		Bitmap bitmapQR = null; // Initialize bitmap, only one is necessary for each user, can be updated
-		String qrInformation = "http://79.136.89.243/get/" + personalCardListener.getPersonalCard().id;
-		Log.d("qrinformation", qrInformation);
-		com.google.zxing.Writer QRwriter = new QRCodeWriter();// creates a writer object
-		try{
-			BitMatrix matrix = QRwriter.encode(qrInformation, BarcodeFormat.QR_CODE,size, size); // creates a matrix from the given string to specified format
-			bitmapQR = Bitmap.createBitmap(size, size, Config.ARGB_4444); // Setup for bitmap, each pixel is stored in one byte.hic
-			for (int i = 0; i < size; i++){
-				for (int j = 0; j < size; j++){
-					bitmapQR.setPixel(i, j, matrix.get(i, j) ? Color.BLACK: Color.WHITE);// loops through bitmap and matrix to create the bitmap graphics
-				}
-			}
-		}
-		catch (WriterException generateFail) {
-			generateFail.printStackTrace();
-		}
-		if (bitmapQR != null){
-			QRView.setImageBitmap(bitmapQR);
-		}
-	}
-	
 	public Dialog createUpdateDialog(){
 		
 		LayoutInflater inflater = getActivity().getLayoutInflater();
@@ -212,7 +184,7 @@ public class PersonalTab extends Fragment {
 	}
 	
 	public void showPersonalCard(){
-		generateQR();
+		QRView.setImageBitmap(personalCardListener.getQRCode());
 		QRView.setVisibility(View.VISIBLE);
 		name_t.setText(personalCardListener.getPersonalCard().firstName + " " + personalCardListener.getPersonalCard().lastName);
 		name_t.setVisibility(View.VISIBLE);

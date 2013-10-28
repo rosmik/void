@@ -17,6 +17,11 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.HTTP;
 
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
+
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
 import android.app.SearchManager;
@@ -40,6 +45,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.content.ComponentName;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.Bitmap.Config;
 
 public class MainActivity extends FragmentActivity implements
 ActionBar.TabListener, PersonalTab.CardListener {
@@ -365,8 +372,24 @@ ActionBar.TabListener, PersonalTab.CardListener {
 
 	@Override
 	public Bitmap getQRCode() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+			int size = 200;// Cubic size of QR code
+			Bitmap bitmapQR = null; // Initialize bitmap, only one is necessary for each user, can be updated
+			String qrInformation = getAddress + personalCard.id;
+			Log.d("MainActivity", qrInformation);
+			com.google.zxing.Writer QRwriter = new QRCodeWriter();// creates a writer object
+			try{
+				BitMatrix matrix = QRwriter.encode(qrInformation, BarcodeFormat.QR_CODE,size, size); // creates a matrix from the given string to specified format
+				bitmapQR = Bitmap.createBitmap(size, size, Config.ARGB_4444); // Setup for bitmap, each pixel is stored in one byte.hic
+				for (int i = 0; i < size; i++){
+					for (int j = 0; j < size; j++){
+						bitmapQR.setPixel(i, j, matrix.get(i, j) ? Color.BLACK: Color.WHITE);// loops through bitmap and matrix to create the bitmap graphics
+					}
+				}
+			}
+			catch (WriterException generateFail) {
+				generateFail.printStackTrace();
+			}
+			return bitmapQR;
+		}
 
 }
