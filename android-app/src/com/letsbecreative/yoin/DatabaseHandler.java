@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import org.json.JSONException;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -28,7 +30,7 @@ public class DatabaseHandler extends SQLiteOpenHelper{
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 		String databaseTable= "CREATE TABLE " + databaseName + "("+
-				"jsonString "+" TEXT"+")";
+				"jsonString "+" TEXT,"+"me " +"INTEGER DEFAULT 0" +")";
 		db.execSQL(databaseTable);
 		// TODO Auto-generated method stub		
 	}
@@ -44,8 +46,39 @@ public class DatabaseHandler extends SQLiteOpenHelper{
 		SQLiteDatabase db = getWritableDatabase();
 		ContentValues values = new ContentValues();
 		values.put("jsonString", card.toString());
-		db.insert(databaseName,null,values);		
+		db.insert(databaseName,null,values);
+
 		db.close();
+	}
+	 
+	public void addPersonalCard(Card card){
+		SQLiteDatabase db = getWritableDatabase();
+		ContentValues values = new ContentValues();
+		values.put("jsonString", card.toString());
+		values.put("me", 1);
+		db.insert(databaseName,null,values);
+
+		db.close();
+	}
+	
+	public Card getPersonalCard(){
+		SQLiteDatabase db = getWritableDatabase();
+		String selectQuery = "SELECT jsonString FROM " + databaseName + " WHERE me = 1";
+
+		Cursor cursor = db.rawQuery(selectQuery, null);
+		Card personalCard = null;
+		if(cursor.moveToFirst()){
+			try {
+				//only one object should be me so this should be ok.
+				personalCard = new Card(cursor.getString(0));
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				Log.e("Yoin", "Couldn't recreate personal card from database");
+				e.printStackTrace();
+			}
+			
+		}
+		return personalCard;
 	}
 
 
@@ -57,7 +90,7 @@ public class DatabaseHandler extends SQLiteOpenHelper{
 			cardVector.clear();
 
 			// Select All Query
-			String selectQuery = "SELECT * FROM " + databaseName;
+			String selectQuery = "SELECT jsonString FROM " + databaseName + "WHERE me = 0";
 
 			SQLiteDatabase db = this.getWritableDatabase();
 			Cursor cursor = db.rawQuery(selectQuery, null);

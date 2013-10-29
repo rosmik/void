@@ -57,7 +57,7 @@ ActionBar.TabListener, PersonalTab.CardListener {
 	static final int YOU = 1;
 	static final int CONTACTS = 2;
 
-	// Variables from TextInput
+	// Variables used in personaltab
 	public String getAddress = "http://79.136.89.243/get/";
 	public String postAddress = "http://79.136.89.243/add";
 	public Card personalCard = null;
@@ -127,6 +127,10 @@ ActionBar.TabListener, PersonalTab.CardListener {
 		databaseHandler = new DatabaseHandler(getBaseContext(), "yoinDatabase", null , 1);
 
 		databaseHandler.getContacts(cardVector);
+		
+		if (personalCard == null){
+			setPersonalCard(databaseHandler.getPersonalCard());
+		}
 
 		setContentView(R.layout.activity_main);
 
@@ -143,19 +147,19 @@ ActionBar.TabListener, PersonalTab.CardListener {
 		// Set up the ViewPager with the sections adapter.
 		mViewPager = (ViewPager) findViewById(R.id.pager);
 		mViewPager.setAdapter(mSectionsPagerAdapter);
-		
-		 // When swiping between different sections, select the corresponding
-        // tab. We can also use ActionBar.Tab#select() to do this if we have
-        // a reference to the Tab.
-        mViewPager
-                        .setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-                                @Override
-                                public void onPageSelected(int position) {
-                                		updateNavColor(position); // Update color of navigator items when swiping to another fragment
-                                }
-                        });
-        
-  
+
+		// When swiping between different sections, select the corresponding
+		// tab. We can also use ActionBar.Tab#select() to do this if we have
+		// a reference to the Tab.
+		mViewPager
+		.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+			@Override
+			public void onPageSelected(int position) {
+				updateNavColor(position); // Update color of navigator items when swiping to another fragment
+			}
+		});
+
+
 		// Set the default fragment to show. Showing the middle fragmet 
 		mViewPager.setCurrentItem(YOU);
 
@@ -190,40 +194,42 @@ ActionBar.TabListener, PersonalTab.CardListener {
 			}
 		});
 
+		
+		
 	}
-	
+
 	protected void updateNavColor(int i) {
-			Button navScanButton = (Button) findViewById(R.id.nav_scanner);
-			Button navYouButton = (Button) findViewById(R.id.nav_you);
-			Button navContactsButton = (Button) findViewById(R.id.nav_contacts);
-			
-			switch(i){
-			case SCANNER:
-				navScanButton.setCompoundDrawablesWithIntrinsicBounds(0,R.drawable.ic_nav_on,0,0);
-				navYouButton.setCompoundDrawablesWithIntrinsicBounds(0,R.drawable.ic_nav_off,0,0);
-				navContactsButton.setCompoundDrawablesWithIntrinsicBounds(0,R.drawable.ic_nav_off,0,0);
-				navScanButton.setTextColor(Color.BLUE);
-				navYouButton.setTextColor(Color.WHITE);
-				navContactsButton.setTextColor(Color.WHITE);
-				break;
-			case YOU:
-				navScanButton.setCompoundDrawablesWithIntrinsicBounds(0,R.drawable.ic_nav_off,0,0);
-				navYouButton.setCompoundDrawablesWithIntrinsicBounds(0,R.drawable.ic_nav_on,0,0);
-				navContactsButton.setCompoundDrawablesWithIntrinsicBounds(0,R.drawable.ic_nav_off,0,0);
-				navScanButton.setTextColor(Color.WHITE);
-				navYouButton.setTextColor(Color.BLUE);
-				navContactsButton.setTextColor(Color.WHITE);
-				break;
-			case CONTACTS:
-				navScanButton.setCompoundDrawablesWithIntrinsicBounds(0,R.drawable.ic_nav_off,0,0);
-				navYouButton.setCompoundDrawablesWithIntrinsicBounds(0,R.drawable.ic_nav_off,0,0);
-				navContactsButton.setCompoundDrawablesWithIntrinsicBounds(0,R.drawable.ic_nav_on,0,0);
-				navScanButton.setTextColor(Color.WHITE);
-				navYouButton.setTextColor(Color.WHITE);
-				navContactsButton.setTextColor(Color.BLUE);
-				break;
-			}
+		Button navScanButton = (Button) findViewById(R.id.nav_scanner);
+		Button navYouButton = (Button) findViewById(R.id.nav_you);
+		Button navContactsButton = (Button) findViewById(R.id.nav_contacts);
+
+		switch(i){
+		case SCANNER:
+			navScanButton.setCompoundDrawablesWithIntrinsicBounds(0,R.drawable.ic_nav_on,0,0);
+			navYouButton.setCompoundDrawablesWithIntrinsicBounds(0,R.drawable.ic_nav_off,0,0);
+			navContactsButton.setCompoundDrawablesWithIntrinsicBounds(0,R.drawable.ic_nav_off,0,0);
+			navScanButton.setTextColor(Color.BLUE);
+			navYouButton.setTextColor(Color.WHITE);
+			navContactsButton.setTextColor(Color.WHITE);
+			break;
+		case YOU:
+			navScanButton.setCompoundDrawablesWithIntrinsicBounds(0,R.drawable.ic_nav_off,0,0);
+			navYouButton.setCompoundDrawablesWithIntrinsicBounds(0,R.drawable.ic_nav_on,0,0);
+			navContactsButton.setCompoundDrawablesWithIntrinsicBounds(0,R.drawable.ic_nav_off,0,0);
+			navScanButton.setTextColor(Color.WHITE);
+			navYouButton.setTextColor(Color.BLUE);
+			navContactsButton.setTextColor(Color.WHITE);
+			break;
+		case CONTACTS:
+			navScanButton.setCompoundDrawablesWithIntrinsicBounds(0,R.drawable.ic_nav_off,0,0);
+			navYouButton.setCompoundDrawablesWithIntrinsicBounds(0,R.drawable.ic_nav_off,0,0);
+			navContactsButton.setCompoundDrawablesWithIntrinsicBounds(0,R.drawable.ic_nav_on,0,0);
+			navScanButton.setTextColor(Color.WHITE);
+			navYouButton.setTextColor(Color.WHITE);
+			navContactsButton.setTextColor(Color.BLUE);
+			break;
 		}
+	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -383,15 +389,16 @@ ActionBar.TabListener, PersonalTab.CardListener {
 			@Override
 			protected void onPostExecute(String result){
 				if (result != null){
-					Log.d("searchContactResult", result);
+					Log.d("Yoin", "searchContactResult: "+result);
 					//addedAddress.setText("Get your card at: http://79.136.89.243/get/" + result);
 					//Card personalCard = personalCardListener.getPersonalCard();
 					personalCard.id = result;
+					databaseHandler.addPersonalCard(personalCard);
 					showPersonalCard();
 					Toast.makeText(getApplicationContext(), "Saved your data " + personalCard.firstName + "!", Toast.LENGTH_LONG).show();
 
 				}else{
-					Log.e("searchContactResult", "Failed saving user-data" );
+					Log.e("Yoin","searchContactResult: Failed saving user-data" );
 					Toast contactToast= Toast.makeText(getApplicationContext(), "Failed to save your data", Toast.LENGTH_SHORT);
 					contactToast.show();
 				}
@@ -410,31 +417,31 @@ ActionBar.TabListener, PersonalTab.CardListener {
 		this.runOnUiThread(new Runnable(){
 			public void run(){		
 				personalTab.showPersonalCard();
-				
+
 			}
 		});
 	}
 
 	@Override
 	public Bitmap getQRCode() {
-			int size = 200;// Cubic size of QR code
-			Bitmap bitmapQR = null; // Initialize bitmap, only one is necessary for each user, can be updated
-			String qrInformation = getAddress + personalCard.id;
-			Log.d("MainActivity", qrInformation);
-			com.google.zxing.Writer QRwriter = new QRCodeWriter();// creates a writer object
-			try{
-				BitMatrix matrix = QRwriter.encode(qrInformation, BarcodeFormat.QR_CODE,size, size); // creates a matrix from the given string to specified format
-				bitmapQR = Bitmap.createBitmap(size, size, Config.ARGB_4444); // Setup for bitmap, each pixel is stored in one byte.hic
-				for (int i = 0; i < size; i++){
-					for (int j = 0; j < size; j++){
-						bitmapQR.setPixel(i, j, matrix.get(i, j) ? Color.BLACK: Color.WHITE);// loops through bitmap and matrix to create the bitmap graphics
-					}
+		int size = 200;// Cubic size of QR code
+		Bitmap bitmapQR = null; // Initialize bitmap, only one is necessary for each user, can be updated
+		String qrInformation = getAddress + personalCard.id;
+		Log.d("MainActivity", qrInformation);
+		com.google.zxing.Writer QRwriter = new QRCodeWriter();// creates a writer object
+		try{
+			BitMatrix matrix = QRwriter.encode(qrInformation, BarcodeFormat.QR_CODE,size, size); // creates a matrix from the given string to specified format
+			bitmapQR = Bitmap.createBitmap(size, size, Config.ARGB_4444); // Setup for bitmap, each pixel is stored in one byte.hic
+			for (int i = 0; i < size; i++){
+				for (int j = 0; j < size; j++){
+					bitmapQR.setPixel(i, j, matrix.get(i, j) ? Color.BLACK: Color.WHITE);// loops through bitmap and matrix to create the bitmap graphics
 				}
 			}
-			catch (WriterException generateFail) {
-				generateFail.printStackTrace();
-			}
-			return bitmapQR;
 		}
+		catch (WriterException generateFail) {
+			generateFail.printStackTrace();
+		}
+		return bitmapQR;
+	}
 
 }
