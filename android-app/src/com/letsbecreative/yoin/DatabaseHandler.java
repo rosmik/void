@@ -37,9 +37,13 @@ public class DatabaseHandler extends SQLiteOpenHelper{
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		// TODO Auto-generated method stub
+		//not really sure if this works.
 		//delete table
+		Log.w("Yoin",
+		        "Upgrading database from version " + oldVersion + " to "
+		            + newVersion + ", which will destroy all old data");
 		db.execSQL("DROP TABLE IF EXISTS " + databaseName);
+		onCreate(db);
 		//how to add a new table?
 	}
 	 public void addContact(Card card) {
@@ -90,7 +94,7 @@ public class DatabaseHandler extends SQLiteOpenHelper{
 			cardVector.clear();
 
 			// Select All Query
-			String selectQuery = "SELECT jsonString FROM " + databaseName + "WHERE me = 0";
+			String selectQuery = "SELECT jsonString FROM " + databaseName + " WHERE me = 0";
 
 			SQLiteDatabase db = this.getWritableDatabase();
 			Cursor cursor = db.rawQuery(selectQuery, null);
