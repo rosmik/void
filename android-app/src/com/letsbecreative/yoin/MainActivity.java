@@ -49,7 +49,7 @@ import android.graphics.Color;
 import android.graphics.Bitmap.Config;
 
 public class MainActivity extends FragmentActivity implements
-ActionBar.TabListener, PersonalTab.CardListener {
+ActionBar.TabListener, PersonalTab.CardListener, HttpRequest.RequestListener, QRFragment.QRListener {
 
 	// Constants used for fragment numbering
 	static final int SCANNER = 0;
@@ -60,16 +60,14 @@ ActionBar.TabListener, PersonalTab.CardListener {
 	public String getAddress = "http://79.136.89.243/get/";
 	public String postAddress = "http://79.136.89.243/add";
 	public Card personalCard = null;
-
-	@Override
-	public Card getPersonalCard() {
-		return personalCard;
+	
+	//Variables used in QR-fragment
+	IQRCallback newCardCallback;
+	
+	public interface IQRCallback{
+		public void callback(Card card);
 	}
 
-	@Override
-	public void setPersonalCard(Card personalCard) {
-		this.personalCard = personalCard;
-	}
 
 	/**
 	 * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -117,14 +115,13 @@ ActionBar.TabListener, PersonalTab.CardListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		qrReaderTab.setNewCardCallback(new QRFragment.IQRCallback(){
+		setNewCardCallback(new IQRCallback(){
 			public void callback(Card card){
 				qrCallback(card	);
 			}
 		});
 
-		databaseHandler = new DatabaseHandler(getBaseContext(), "yoinDatabase", null , 1);
-
+		databaseHandler = new DatabaseHandler(getBaseContext(), "yoinDatabase", null , 2);
 		databaseHandler.getContacts(cardVector);
 
 		if (personalCard == null){
@@ -345,15 +342,15 @@ ActionBar.TabListener, PersonalTab.CardListener {
 		}
 	}
 
+	
+	//Functions used in PersonalTab
 	@Override
 	public void requestHttpPost(String jsonString) {
 
-		String[] dataArray;
-		dataArray = new String[3];
-		dataArray[0] = "POST";
-		dataArray[1] = postAddress;
-		dataArray[2] = jsonString;
-		new HttpRequest().execute(dataArray);
+		String[] dataArray =  new String[2]; 
+		dataArray[0] = postAddress;
+		dataArray[1] = jsonString;
+		new HttpRequest("POST",this).execute(dataArray);
 	}
 
 	private void showPersonalCard(){
@@ -362,6 +359,16 @@ ActionBar.TabListener, PersonalTab.CardListener {
 				personalTab.showPersonalCard();
 			}
 		});
+	}
+	
+	@Override
+	public Card getPersonalCard() {
+		return personalCard;
+	}
+	
+	@Override
+	public void setPersonalCard(Card personalCard) {
+		this.personalCard = personalCard;
 	}
 
 	@Override
@@ -387,73 +394,57 @@ ActionBar.TabListener, PersonalTab.CardListener {
 		return bitmapQR;
 	}
 
-	class HttpRequest extends AsyncTask<String, Object, String>{
+	
+	
+	//functions used in HttpRequest Class
+//	@Override
+//	public Context inheritGetBaseContext() {
+//		return getBaseContext();
+//	}
 
-
-
-		@Override
-		protected String doInBackground(String... uri) {
-			HttpResponse response;
-			HttpClient httpclient = new DefaultHttpClient();
-
-			if (uri[0] == "POST"){
-				HttpPost httpPost = new HttpPost(uri[1]);			
-				String responseString = null;
-				httpPost.setHeader("Content-type", "application/json;charset=utf-8");
-
-				try {
-					httpPost.setEntity(new StringEntity(uri[2], HTTP.UTF_8));
-					Log.d("json",uri[2]);
-					Log.d("Header",httpPost.getFirstHeader("Content-type").toString());
-					Log.d("requestHttp", "Trying to send http Post");
-					response = httpclient.execute(httpPost);
-					Log.d("requestHttp", "sent a http Post");
-					StatusLine statusLine = response.getStatusLine();
-					if(statusLine.getStatusCode() == HttpStatus.SC_OK){
-						ByteArrayOutputStream out = new ByteArrayOutputStream();
-						response.getEntity().writeTo(out);
-						out.close();
-						responseString = out.toString();
-					} else{
-						//Closes the connection.
-						response.getEntity().getContent().close();
-						throw new IOException(statusLine.getReasonPhrase());
-					}
-				} catch (ClientProtocolException e) {
-					//TODO Handle problems..
-				} catch (IOException e) {
-					//TODO Handle problems..s
-				}
-				return responseString;
-			}
-			else if (uri[0] == "GET"){
-				return null;
-				
-			}
-			else {
-				Toast.makeText(getApplicationContext(), "Failed to perform httppost", 1000).show();
-				return null;
-			}
-
+	@Override
+	public boolean checkNewCardCallback() {
+		if (newCardCallback != null){
+			return true;
 		}
-
-		@Override	
-		protected void onPostExecute(String result){
-			if (result != null){
-				Log.d("Yoin", "searchContactResult: "+result);
-				//addedAddress.setText("Get your card at: http://79.136.89.243/get/" + result);
-				//Card personalCard = personalCardListener.getPersonalCard();
-				personalCard.id = result;
-				databaseHandler.addPersonalCard(personalCard);
-				showPersonalCard();
-				Toast.makeText(getApplicationContext(), "Saved your data " + personalCard.firstName + "!", Toast.LENGTH_LONG).show();
-
-			}else{
-				Log.e("Yoin","searchContactResult: Failed saving user-data" );
-				Toast contactToast= Toast.makeText(getApplicationContext(), "Failed to save your data", Toast.LENGTH_SHORT);
-				contactToast.show();
-			}
-		}
+		return false;
+	}
+	
+	@Override
+	public void callback(Card card) {
+		newCardCallback.callback(card);
+	}
+	
+	@Override
+	public void addPersonalCard(Card resultCard) {
+		databaseHandler.addPersonalCard(resultCard);
+		personalCard = resultCard;
+		showPersonalCard();
+		Toast.makeText(getApplicationContext(), "Saved your data " + personalCard.firstName + "!", Toast.LENGTH_LONG).show();
 	}
 
+	@Override
+	public void alertSaveFailed() {
+		Toast.makeText(getApplicationContext(),"Unable to save your data. Check your internet connection!", Toast.LENGTH_SHORT).show();
+	}
+
+	@Override
+	public void alertContactFailed() {
+		// TODO Auto-generated method stub
+		Toast.makeText(getApplicationContext(),"Unable to find data. Check your internet connection!", Toast.LENGTH_SHORT).show();
+		
+	}
+	
+	//Functions used in QR-fragment
+	public void setNewCardCallback(IQRCallback callback){
+		newCardCallback = callback;
+	}
+	
+	@Override
+	public void requestHttpGet(String result){
+		String[] dataArray =  new String[1]; 
+		dataArray[0] = result;
+		new HttpRequest("GET",this).execute(dataArray);
+	}
+	
 }

@@ -29,8 +29,7 @@ public class DatabaseHandler extends SQLiteOpenHelper{
 
 	@Override
 	public void onCreate(SQLiteDatabase db) {
-		String databaseTable= "CREATE TABLE " + databaseName + "("+
-				"jsonString "+" TEXT,"+"me " +"INTEGER DEFAULT 0" +")";
+		String databaseTable= "CREATE TABLE " + databaseName + "(jsonString TEXT, me INTEGER DEFAULT 0)";
 		db.execSQL(databaseTable);
 		// TODO Auto-generated method stub		
 	}
