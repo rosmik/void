@@ -44,7 +44,6 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.content.ComponentName;
-
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Bitmap.Config;
@@ -127,7 +126,7 @@ ActionBar.TabListener, PersonalTab.CardListener {
 		databaseHandler = new DatabaseHandler(getBaseContext(), "yoinDatabase", null , 1);
 
 		databaseHandler.getContacts(cardVector);
-		
+
 		if (personalCard == null){
 			setPersonalCard(databaseHandler.getPersonalCard());
 		}
@@ -194,8 +193,8 @@ ActionBar.TabListener, PersonalTab.CardListener {
 			}
 		});
 
-		
-		
+
+
 	}
 
 	protected void updateNavColor(int i) {
@@ -349,21 +348,62 @@ ActionBar.TabListener, PersonalTab.CardListener {
 	@Override
 	public void requestHttpPost(String jsonString) {
 
-		AsyncTask<String, Object, String> task = new AsyncTask<String, Object, String>() {
+		String[] dataArray;
+		dataArray = new String[3];
+		dataArray[0] = "POST";
+		dataArray[1] = postAddress;
+		dataArray[2] = jsonString;
+		new HttpRequest().execute(dataArray);
+	}
 
-			@Override
-			protected String doInBackground(String... uri) {
-				HttpResponse response;
-				HttpClient httpclient = new DefaultHttpClient();
-				HttpPost httpPost = new HttpPost(uri[0]);
+	private void showPersonalCard(){
+		this.runOnUiThread(new Runnable(){
+			public void run(){		
+				personalTab.showPersonalCard();
+			}
+		});
+	}
+
+	@Override
+	public Bitmap getQRCode() {
+
+		int size = 200;// Cubic size of QR code
+		Bitmap bitmapQR = null; // Initialize bitmap, only one is necessary for each user, can be updated
+		String qrInformation = getAddress + personalCard.id;
+		Log.d("MainActivity", qrInformation);
+		com.google.zxing.Writer QRwriter = new QRCodeWriter();// creates a writer object
+		try{
+			BitMatrix matrix = QRwriter.encode(qrInformation, BarcodeFormat.QR_CODE,size, size); // creates a matrix from the given string to specified format
+			bitmapQR = Bitmap.createBitmap(size, size, Config.ARGB_4444); // Setup for bitmap, each pixel is stored in one byte.hic
+			for (int i = 0; i < size; i++){
+				for (int j = 0; j < size; j++){
+					bitmapQR.setPixel(i, j, matrix.get(i, j) ? Color.BLACK: Color.WHITE);// loops through bitmap and matrix to create the bitmap graphics
+				}
+			}
+		}
+		catch (WriterException generateFail) {
+			generateFail.printStackTrace();
+		}
+		return bitmapQR;
+	}
+
+	class HttpRequest extends AsyncTask<String, Object, String>{
+
+
+
+		@Override
+		protected String doInBackground(String... uri) {
+			HttpResponse response;
+			HttpClient httpclient = new DefaultHttpClient();
+
+			if (uri[0] == "POST"){
+				HttpPost httpPost = new HttpPost(uri[1]);			
 				String responseString = null;
-				//httpPost.setHeader("Accept", "application/json");
 				httpPost.setHeader("Content-type", "application/json;charset=utf-8");
 
-
 				try {
-					httpPost.setEntity(new StringEntity(uri[1], HTTP.UTF_8));
-					Log.d("json",uri[1]);
+					httpPost.setEntity(new StringEntity(uri[2], HTTP.UTF_8));
+					Log.d("json",uri[2]);
 					Log.d("Header",httpPost.getFirstHeader("Content-type").toString());
 					Log.d("requestHttp", "Trying to send http Post");
 					response = httpclient.execute(httpPost);
@@ -386,62 +426,34 @@ ActionBar.TabListener, PersonalTab.CardListener {
 				}
 				return responseString;
 			}
-			@Override
-			protected void onPostExecute(String result){
-				if (result != null){
-					Log.d("Yoin", "searchContactResult: "+result);
-					//addedAddress.setText("Get your card at: http://79.136.89.243/get/" + result);
-					//Card personalCard = personalCardListener.getPersonalCard();
-					personalCard.id = result;
-					databaseHandler.addPersonalCard(personalCard);
-					showPersonalCard();
-					Toast.makeText(getApplicationContext(), "Saved your data " + personalCard.firstName + "!", Toast.LENGTH_LONG).show();
-
-				}else{
-					Log.e("Yoin","searchContactResult: Failed saving user-data" );
-					Toast contactToast= Toast.makeText(getApplicationContext(), "Failed to save your data", Toast.LENGTH_SHORT);
-					contactToast.show();
-				}
+			else if (uri[0] == "GET"){
+				return null;
+				
+			}
+			else {
+				Toast.makeText(getApplicationContext(), "Failed to perform httppost", 1000).show();
+				return null;
 			}
 
-		};  
-		String[] dataArray;
-		dataArray = new String[2];
-		dataArray[0] = postAddress;
-		dataArray[1] = jsonString;
-		task.execute(dataArray);
+		}
 
-	}
+		@Override	
+		protected void onPostExecute(String result){
+			if (result != null){
+				Log.d("Yoin", "searchContactResult: "+result);
+				//addedAddress.setText("Get your card at: http://79.136.89.243/get/" + result);
+				//Card personalCard = personalCardListener.getPersonalCard();
+				personalCard.id = result;
+				databaseHandler.addPersonalCard(personalCard);
+				showPersonalCard();
+				Toast.makeText(getApplicationContext(), "Saved your data " + personalCard.firstName + "!", Toast.LENGTH_LONG).show();
 
-	private void showPersonalCard(){
-		this.runOnUiThread(new Runnable(){
-			public void run(){		
-				personalTab.showPersonalCard();
-
-			}
-		});
-	}
-
-	@Override
-	public Bitmap getQRCode() {
-		int size = 200;// Cubic size of QR code
-		Bitmap bitmapQR = null; // Initialize bitmap, only one is necessary for each user, can be updated
-		String qrInformation = getAddress + personalCard.id;
-		Log.d("MainActivity", qrInformation);
-		com.google.zxing.Writer QRwriter = new QRCodeWriter();// creates a writer object
-		try{
-			BitMatrix matrix = QRwriter.encode(qrInformation, BarcodeFormat.QR_CODE,size, size); // creates a matrix from the given string to specified format
-			bitmapQR = Bitmap.createBitmap(size, size, Config.ARGB_4444); // Setup for bitmap, each pixel is stored in one byte.hic
-			for (int i = 0; i < size; i++){
-				for (int j = 0; j < size; j++){
-					bitmapQR.setPixel(i, j, matrix.get(i, j) ? Color.BLACK: Color.WHITE);// loops through bitmap and matrix to create the bitmap graphics
-				}
+			}else{
+				Log.e("Yoin","searchContactResult: Failed saving user-data" );
+				Toast contactToast= Toast.makeText(getApplicationContext(), "Failed to save your data", Toast.LENGTH_SHORT);
+				contactToast.show();
 			}
 		}
-		catch (WriterException generateFail) {
-			generateFail.printStackTrace();
-		}
-		return bitmapQR;
 	}
 
 }
